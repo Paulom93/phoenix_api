@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  version: "0.0.3"
+  version: "5.0.3"
   title: IOT Solutions
 # during dev, should point to your local machine
 host: localhost:10010
@@ -20,12 +20,14 @@ produces:
 paths:
   
   #############################################################################
-  #################################A MINHA CONTA###############################
+  #################################MY ACCOUNT###############################
   #############################################################################
   /user_notifications:
     get:
       tags:
         - User
+        - Notifications
+        - Common #??
       summary: "Return User information"
       description: Returns my information 
       operationId: getUserNotifications
@@ -51,15 +53,21 @@ paths:
                 items:
                   $ref: '#/definitions/Notifications'  
   
-  /user_account:
+  /user_account/{id}:
     get:
       tags:
         - User
+        - MyAccount
       summary: "Return User information"
       description: Returns my information 
       operationId: getAccountInfo
       parameters:
-        - $ref: '#/parameters/user_id'
+      - in: path
+        name: id
+        description: The id of user
+        required: true
+        type: integer
+        format: int32
       responses:
         200:
           description:  OK
@@ -84,6 +92,7 @@ paths:
     get:
       tags:
         - User
+        - MyAccount
       summary: "Return User settings"
       description: Returns my settings 
       operationId: getAccountSettings
@@ -126,11 +135,40 @@ paths:
                 items:
                   $ref: '#/definitions/UserTypeUserSetting'
                   
-  
-  /timezones:
+  /get_user_logo:
     get:
       tags:
         - User
+        - MyAccount
+      summary: "Return User logo"
+      description: Returns user logo
+      operationId: getUserLogo
+      parameters:
+        - $ref: '#/parameters/logo_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              logo:
+                type: array
+                items:
+                  $ref: '#/definitions/UserAccount'
+  /timezones:
+    get:
+      tags:
+        - MyAccount
+        - Common
       summary: "Return Timezones"
       description: Returns all timezones 
       operationId: getTimezones
@@ -158,6 +196,8 @@ paths:
   /countries:
      get:
       tags:
+        - MyAccount
+        - Common
         - User
       summary: "Return Timezones"
       description: Returns all Countries 
@@ -186,7 +226,9 @@ paths:
   /user_types:
     get:
       tags:
+        - MyAccount
         - User
+        - Common
       summary: "Return the User Types"
       description: User type can be Advanced or Basic
       operationId: getUserTypes
@@ -213,6 +255,10 @@ paths:
   
   /get_account_managemet_centers:
     get:
+      tags:
+        - MyAccount
+        - User
+        - Common
       summary: "Return User information"
       description: Returns my information 
       operationId: getManagementCenter
@@ -242,6 +288,8 @@ paths:
     get:
       tags:
         - User
+        - MyAccount
+        - Common
       summary: "Return the list of languages available"
       description: Return a list of all Languages, with country code, name and id
       operationId: getLanguages
@@ -270,6 +318,8 @@ paths:
     get:
       tags:
         - User
+        - MyAccount
+        - Common
       summary: "Return the gender Types"
       description: Return gender types, with id and name , can be "masculino" and "feminino"
       operationId: getUserGenderType
@@ -298,6 +348,8 @@ paths:
     get:
       tags:
         - User
+        - MyAccount
+        - Common
       summary: "Return the date formats "
       description: Return date formats available with id and name , can be "MM-DD-YYYY" or "DD-MM-YYYY"
       operationId: getDateFromats
@@ -325,7 +377,7 @@ paths:
   /get_apps:
     get:
       tags:
-        - Server
+        - Apps
       summary: "Return the Apps "
       description: Return the Apps
       operationId: getApps
@@ -353,7 +405,7 @@ paths:
   /get_apps_segments:
     get:
       tags:
-        - Server
+        - Apps
       summary: "Return the segments "
       description: Return the app segments
       operationId: getAppSegments
@@ -378,7 +430,62 @@ paths:
                 items:
                   $ref: '#/definitions/AppsSegments'
                   
-  
+  /get_app_groups:
+    get:
+      tags:
+        - Apps
+      summary: "Return the app groups "
+      description: Return the app groups
+      operationId: getAppGroups
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              groups:
+                type: array
+                items:
+                  $ref: '#/definitions/AppGroups'
+                  
+  /get_app_categories:
+    get:
+      tags:
+        - Apps
+      summary: "Return the app Category "
+      description: Return the app Category
+      operationId: getAppCategories
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              categories:
+                type: array
+                items:
+                  $ref: '#/definitions/AppCategories'
+    
   
   /get_user_entities_list:
     get:
@@ -411,12 +518,14 @@ paths:
                 type: integer
                 format: int64
               entities:
-                type: object
+                type: array
                 items:
                   $ref: '#/definitions/Entities'
     
   /get_entities_branding:
     get:
+      tags:
+        - Entities
       summary: "Return entities by user id"
       description: Return entities by user id ( parameters is only User_id and noo filters)
       operationId: getEntitiesBranding
@@ -450,6 +559,8 @@ paths:
     get:
       tags:
         - User
+        - Apps
+        - Systems
       summary: "Return App name by user "
       description: Returns app names by User id (required)
       operationId: getAppNameByUser
@@ -485,6 +596,8 @@ paths:
     get:
       tags:
         - User
+        - Common
+        - Systems
       summary: "Return User systems "
       description: Returns systems  by User id (required)
       operationId: getUserSystems
@@ -519,6 +632,7 @@ paths:
     get:
       tags:
         - User
+        - Common
       summary: "Acess control  "
       description: Acess control
       operationId: getUserSystemsAcess
@@ -550,6 +664,8 @@ paths:
                   $ref: '#/definitions/Info_user_system'
   /get_sub_header:
     get:
+      tags:
+        - Common
       summary: "Return sub menu for the user "
       description: Returns the sub menu of the user(parameters)
       operationId: getSubHeader
@@ -663,6 +779,7 @@ paths:
     get:
       tags:
         - User
+        - Notifications
       summary: "Return notification type"
       description: Returns the notification type
       operationId: getNotificationType
@@ -687,7 +804,10 @@ paths:
                   $ref: '#/definitions/Notification_type'
   /get_lg_gw_notifications:
      get:
-      summary: "Return User systems "
+      tags:
+        - User
+        - Hardware
+      summary: "Return User systems"
       description: Returns systems  by User id (required)
       operationId: getlgGatewayNotification
       parameters:
@@ -720,6 +840,9 @@ paths:
     
   /get_gateway_types:
     get:
+      tags:
+        - User
+        - Hardware
       summary: "Return gateway types "
       description: Returns the Gateway Types 
       operationId: getGatewayTypes
@@ -745,6 +868,9 @@ paths:
                   $ref: '#/definitions/GatewayTypes'
   /get_logical_gateways:
     get:
+      tags:
+        - User
+        - Hardware
       summary: "Return logical gateway  "
       description: Returns logical gateway with parameters
       operationId: getLogicalGateway 
@@ -776,7 +902,36 @@ paths:
                 items:
                   $ref: '#/definitions/LogicalGateways'
                   
-                  
+  /count_connected_logical_gateways:  
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return connected gateways by User id "
+      description: Return connected gateways by User id
+      operationId: getConnectedGateways
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description:  return gateway connected and disconnected
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int32
+              active:
+                type: string
+              inactive:
+                type: string
+    
       #############################################################################  
         #########################CATEGORIES#################################
   #############################################################################                
@@ -974,7 +1129,74 @@ paths:
   
  #/count_connected_logical_gateways
  
- 
+  /get_category_info:
+    get:
+      tags:
+        - User
+      summary: "Return User logo"
+      description: Returns user logo
+      operationId: getCategoryInfo
+      parameters:
+        - $ref: '#/parameters/device_category_id'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              info:
+                type: object
+                items:
+                  $ref: '#/definitions/DeviceCategory'
+  
+  /get_contracts:
+    get:
+      tags:
+        - User
+        - Tariffs
+      summary: "Return User logo"
+      description: Returns Contracts using parameters
+      operationId: getContracts
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              #contracts:
+               # type: object
+                #items:
+                 # $ref: '#/definitions/Contracts'
+    
+    
+      
  
 
     
@@ -1045,6 +1267,7 @@ definitions:
         type: string
       read:
         type: boolean
+        
   Notification_type:
     type: object
     properties:
@@ -1100,7 +1323,6 @@ definitions:
       country_code:
         type: string
         
-  
   TimeZones:
     type: object
     properties:
@@ -1109,6 +1331,7 @@ definitions:
         format: int32
       name:
         type: string
+        
   TimezoneUserSetting:
     type: object
     properties:
@@ -1131,6 +1354,7 @@ definitions:
         format: int32
       name:
         type: string
+        
   UserTypeUserSetting:
     type: object
     properties:
@@ -1142,7 +1366,6 @@ definitions:
       internal_description:
         type: string
                   
-        
   DateFormats:
     type: object
     properties:
@@ -1196,6 +1419,7 @@ definitions:
         format: date-time
       is_default:
         type: boolean
+        
   ManagementCenters:
     type: object
     properties:
@@ -1261,6 +1485,24 @@ definitions:
       visible:
         type: boolean
   
+  AppGroups:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  AppCategories:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+     
   UserSystems:
     type: object
     properties:
@@ -1409,7 +1651,6 @@ definitions:
       flg_program:
         type: boolean
 
-        
   History:
     type: object
     properties:
@@ -1425,7 +1666,6 @@ definitions:
       icon:
         type: string
         
-        
   GatewayTypes:
     type: object
     properties:
@@ -1434,6 +1674,7 @@ definitions:
         format: int32
       name:
         type: string
+        
   LogicalGateways:
     type: object
     properties:
@@ -1506,6 +1747,7 @@ definitions:
       owner_id:
         type: integer
         format: int32
+        
   UserFullSystems:
     type: object
     properties:
@@ -1625,7 +1867,6 @@ definitions:
         type: string
       emails_to_notify:
         type: string
-    
     
   GetwayNotification:
       type: object
@@ -1927,6 +2168,36 @@ definitions:
         format: int32
       share_role_name:
         type: string
+        
+  DeviceCategory:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      device_type_id:
+        type: integer
+        format: int32
+      acc:
+        type: string
+      acc_symbol: 
+        type: string
+      internal_code:
+        type: string
+      max:
+        type: string
+      max_symbol:
+        type: string  
+      med:
+        type: string
+      med_symbol:
+        type: string
+      min:
+        type: string
+      min_symbol:
+        type: string
+      name:
+        type: string
 #####################################################################    
 ###########################PUTS#################################
 #####################################################################
@@ -1968,7 +2239,6 @@ definitions:
         items: 
           $ref: '#/definitions/UserAccSettings'
     
-      
   UserProfileEditReturn:
     type: object
     properties:
@@ -2004,7 +2274,18 @@ definitions:
         type: array
         items: 
           $ref: '#/definitions/UserAccSettings'
-    
+   
+  #Contracts:
+   # type: object
+    #properties:
+     # total:
+      #  type: string
+      #data:
+       # type: array
+        #items: 
+        
+          
+      
 #####################################################################    
 ###########################PARAMETERS#################################
 #####################################################################   
@@ -2026,8 +2307,11 @@ parameters:
     limit:  
       name: limit
       in: query
-      description: limit of results per request
-      type: string
+      type: integer
+      format: int32
+      enum: [10,25,50]
+      description: select between 10, 25 or 50 
+      required: false
     order:  
       name: order
       in: query
@@ -2073,3 +2357,55 @@ parameters:
       description: The id of user
       required: true
       type: integer 
+    logo_id:
+      name: logo_id
+      in: query
+      description: The id of logo
+      required: true
+      type: integer 
+    device_category_id:
+      name: device_category_id
+      in: query
+      description: device category Id
+      required: true
+      type: integer 
+      
+  ###################TAGS##################################
+  
+tags:
+  -
+    name: MyAccount
+    description: Endpoints related to accounts
+  -
+    name: User
+    description: Endpoints related to User
+  -
+    name: Notifications
+    description: Endpoints related to the Notifications
+  -
+    name: Categories
+    description: Endpoints related to Categories  
+    
+  -
+    name: Entities 
+    description: Endpoints related to Entities
+  -
+    name: Common
+    description: Endpoints that are Common in ..
+  -
+    name: Menus
+    description: Endpoints related with the Menus
+  -
+    name: Apps
+    description: Endpoints related with the Apps
+  -
+    name: Systems
+    description: Endpoints related with the Systems
+  -
+    name: Hardware
+    description: Endpoints related with Hardware
+  -
+    name: Tariffs
+    description: Endpoints related with Tariffs  
+    
+    
