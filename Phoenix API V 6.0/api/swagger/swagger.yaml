@@ -1,0 +1,7512 @@
+swagger: "2.0"
+info:
+  version: "5.0.3"
+  title: IOT Solutions
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+
+######################################################################################## 
+######################################MYACCOUNT#########################################
+########################################################################################
+paths:
+  /get_all_users: # common not my account information 
+    get:
+      tags:
+        - User
+        - Notifications
+        - Hardware
+      summary: "Return User information"
+      description: Returns my information 
+      operationId: getAllUsers
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              users:
+                type: array
+                items:
+                  $ref: '#/definitions/UsersAll'  
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'    
+  /is_alive:
+    get:
+      tags:
+        - User
+        - MyAccount
+      summary: "Return User information"
+      description: Returns my information 
+      operationId: getIsAlive
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              alive:
+                type: boolean
+              user:
+                type: array
+                items:
+                  $ref: '#/definitions/Isalive'
+    
+  ######### ACABAR###################################
+  
+  /user_notifications:
+    get:
+      tags:
+        - User
+        - Notifications
+        - Common #??
+      summary: "Return User information"
+      description:  in myaacount/personal_information/show , where this method is called to show the notifications for the user.
+      operationId: getUserNotifications
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              content:
+                type: array
+                items:
+                  $ref: '#/definitions/Notifications'  
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/InternalServerError'  
+  
+  /user_account/{id}:
+    get:
+      tags:
+        - User
+        - MyAccount
+      summary: "Return User information"
+      description: This request method in my_account/personal_information/user_id, returns all the information of the user that is logged in.
+      operationId: getAccountInfo
+      parameters:
+      - in: path
+        name: id
+        description: The id of user
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              content:
+                type: array
+                items:
+                  $ref: '#/definitions/UserAccount'  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/InternalServerError'
+  /user_setting/{id}:
+    get:
+      tags:
+        - User
+        - MyAccount
+      summary: "Return User settings"
+      description: This request method in my_account/personal_information/user_id, returns all the settings of the user that is logged in. 
+      operationId: getAccountSettings
+      parameters:
+      - in: path
+        name: id
+        description: The id of user
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              date_format:
+                type: array
+                items:
+                  $ref: '#/definitions/DateFormatUserSetting'
+              language:
+                type: array
+                items:
+                  $ref: '#/definitions/LanguageUserSetting'
+              timezone:
+                type: array
+                items:
+                  $ref: '#/definitions/TimezoneUserSetting'
+              user_type:
+                type: array
+                items:
+                  $ref: '#/definitions/UserTypeUserSetting'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /update_user_account: # ver melhor se uso user_account ou user_profile ! devo fazer user_edit_setting tambem?
+    post:
+      tags:
+        - User
+      summary: "Updates `User` account"
+      description: Updates user profile
+      operationId: UpdateMyProfile
+      parameters:
+        - in: body
+          name: body
+          description: ´User´ to be updated
+          required: true
+          schema:
+            $ref: "#/definitions/UserProfileEdit"
+            
+      responses:
+        200:
+          description:  A alteração foi efectuada com sucesso.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              UserProfileUpdate:
+                type: object
+                items: 
+                  $ref: '#/definitions/UserProfileEditReturn'
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/InternalServerError'                
+  
+  /get_user_logo:
+    get:
+      tags:
+        - User
+        - MyAccount
+      summary: "Return User logo"
+      description: this method Returns the user logo , once selected .
+      operationId: getUserLogo
+      parameters:
+        - $ref: '#/parameters/logo_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              logo:
+                type: array
+                items:
+                  $ref: '#/definitions/UserAccount'
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+  
+  /timezones:
+    get:
+      tags:
+        - MyAccount
+        - Common
+      summary: "Return Timezones"
+      description: Returns all timezones 
+      operationId: getTimezones
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              timezones:
+                type: array
+                items:
+                  $ref: '#/definitions/TimeZones'       
+  
+  /countries:
+     get:
+      tags:
+        - MyAccount
+        - Common
+        - User
+        - Tariffs
+      summary: "Return countries"
+      description: Returns all Countries 
+      operationId: getCountries
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              content:
+                type: array
+                items:
+                  $ref: '#/definitions/Countries' 
+  
+  /user_types:
+    get:
+      tags:
+        - MyAccount
+        - User
+        - Common
+      summary: "Return the User Types"
+      description: User type can be Advanced or Basic
+      operationId: getUserTypes
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              content:
+                type: array
+                items:
+                  $ref: '#/definitions/UserTypes'  
+  
+  /get_account_managemet_centers:
+    get:
+      tags:
+        - MyAccount
+        - User
+        - Common
+      summary: "Return User information"
+      description: This request method in my_account/user_account/get_account_management_centers?user_id=, returns all the management centers of the user that is logged in.
+      operationId: getManagementCenter
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              management_centers:
+                type: array
+                items:
+                   $ref: '#/definitions/ManagementCenters'  
+  
+  /languages:
+    get:
+      tags:
+        - User
+        - MyAccount
+        - Common
+      summary: "Return the list of languages available"
+      description: Return a list of all Languages, with country code, name and id
+      operationId: getLanguages
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              languages:
+                type: array
+                items:
+                  $ref: '#/definitions/Languages'  
+  
+  /user_gender_type:
+    get:
+      tags:
+        - User
+        - MyAccount
+        - Common
+      summary: "Return the gender Types"
+      description: Return gender types, with id and name , can be "masculino" and "feminino"
+      operationId: getUserGenderType
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_account_gender_types:
+                type: array
+                items:
+                  $ref: '#/definitions/UserGenderType'  
+  
+  /date_formats:
+    get:
+      tags:
+        - User
+        - MyAccount
+        - Common
+      summary: "Return the date formats "
+      description: Return date formats available with id and name , can be "MM-DD-YYYY" or "DD-MM-YYYY"
+      operationId: getDateFromats
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              content:
+                type: array
+                items:
+                  $ref: '#/definitions/DateFormats'
+  
+  /get_apps:
+    get:
+      tags:
+        - Apps
+      summary: "Return the Apps "
+      description: This request method in apps/get_apps, returns all the apps  of the system/server 
+      operationId: getApps
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              apps:
+                type: array
+                items:
+                  $ref: '#/definitions/Apps'
+  
+  /get_apps_segments:
+    get:
+      tags:
+        - Apps
+        - MyAccount
+      summary: "Return the segments "
+      description: This request method in apps/get_app_segments, returns all the apps segments  of the system/server 
+      operationId: getAppSegments
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              segments:
+                type: array
+                items:
+                  $ref: '#/definitions/AppsSegments'
+                
+  /get_entities_branding:
+    get:
+      tags:
+        - Entities
+        - User
+      summary: "Return entities by user id"
+      description: This request method in entities/entities/get_entities_branding?user_id= returns all the entities related/attached of the user that is logged in.
+      operationId: getEntitiesBranding
+      parameters:
+      - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              entities:
+                type: array
+                items:
+                   $ref: '#/definitions/EntitiesBranding'
+        400:
+          $ref: '#/responses/BadRequest'          
+        403:
+          $ref: '#/responses/Forbidden'
+        500:
+          $ref: '#/responses/InternalServerError' 
+  
+  ##/get_permissions:
+######################################################################################## 
+######################################SUBSCRIÇOES#######################################
+########################################################################################
+  
+  /get_app_name_by_user:
+    get:
+      tags:
+        - User
+        - Apps
+        - Subscriptions
+      summary: "Return App name by user "
+      description: Returns app names by User id (required)
+      operationId: getAppNameByUser
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+        
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              system_types:
+                type: array
+                items:
+                  $ref: '#/definitions/SystemTypes'
+  
+  /get_user_systems:
+    get:
+      tags:
+        - User
+        - Common
+        - Subscriptions
+      summary: "Return User systems "
+      description: Returns systems  by User id (required)
+      operationId: getUserSystems
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+
+      responses:
+        200:
+          description:  Notification for the user
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_system:
+                type: object
+                items:
+                  $ref: '#/definitions/UserSystems'                
+  
+                  
+  
+########################################################################################
+######################################FIM###############################################
+########################################################################################
+  
+  
+  
+  
+  /get_user_systen_acess_control:
+    get:
+      tags:
+        - User
+        - Common
+      summary: "Acess control  "
+      description: Acess control
+      operationId: getUserSystemsAcess
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              #integrations:
+                #type:
+              acess_log:
+                type: object
+                items:
+                  $ref: '#/definitions/Acess_log'
+              info:
+                type: array
+                items:
+                  $ref: '#/definitions/Info_user_system'
+  
+  /get_sub_header:
+    get:
+      tags:
+        - Common
+      summary: "Return sub menu for the user "
+      description: Returns the sub menu of the user(parameters)
+      operationId: getSubHeader
+      parameters:
+        - $ref: '#/parameters/app_id'
+        - $ref: '#/parameters/app_segment_id'
+        - $ref: '#/parameters/user_system_id'
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              submenus:
+                type: object
+                items:
+                  $ref: '#/definitions/Submenus'
+        
+        400:
+          $ref: '#/responses/BadRequest'          
+        403:
+          $ref: '#/responses/Forbidden'
+        500:
+          $ref: '#/responses/InternalServerError'                  
+  
+  /get_menus:
+    get:
+      tags:
+        - MyAccount
+        - User
+      summary: "Return menu for the user "
+      description: Returns the menu of the user(parameters)
+      operationId: getMenusUser
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/user_type_id'
+        - $ref: '#/parameters/context_id'
+        - $ref: '#/parameters/context_type'
+        - $ref: '#/parameters/internal_key' 
+      responses:
+        200:
+          description:  menus  for the user
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              title:
+                type: string
+              system_entity:
+                type: string
+              icon:
+                type: string
+              branding:
+               type: string
+            #options:
+                #type:  
+              menus:
+                type: array
+                items:
+                  $ref: '#/definitions/Menus'
+              history:
+                type: array
+                items:
+                  $ref: '#/definitions/History'   
+
+  /get_app_groups:
+    get:
+      tags:
+        - Subscriptions
+      summary: "Return the app groups "
+      description: Return the app groups
+      operationId: getAppGroups
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              groups:
+                type: array
+                items:
+                  $ref: '#/definitions/AppGroups'
+  
+  /get_app_categories:
+    get:
+      tags:
+        - Subscriptions
+      summary: "Return the app Category "
+      description: Return the app Category
+      operationId: getAppCategories
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              categories:
+                type: array
+                items:
+                  $ref: '#/definitions/AppCategories'                
+                  
+  /get_categorized_apps:
+    get:
+      tags:
+        - Subscriptions
+      summary: "Return all the apps "
+      description: Return Categorized apps
+      operationId: getCategorizedApps
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              apps:
+                type: array
+                items:
+                  $ref: '#/definitions/CategorizedApps'
+                  
+                  
+    
+######################################################################################## 
+######################################HARDWARE##########################################
+########################################################################################
+  
+  /get_gateways:
+    get:
+      tags:
+        - User
+        - Hardware
+        - BackOffice
+      summary: "Return  gateways  "
+      description: This method is request in backoffice/hardware, returns a list of gateways (different from logical_gateways).
+      operationId: getGateways
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+        
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              gateways:
+                type: array
+                items:
+                  $ref: '#/definitions/GatewayInfo' 
+  
+  /get_logical_gateways:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return logical gateway  "
+      description: Returns logical gateway with parameters
+      operationId: getLogicalGateway 
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/state_id'
+        - $ref: '#/parameters/gateway_type_id'
+        
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              logical_gateways:
+                type: object
+                items:
+                  $ref: '#/definitions/LogicalGateways'
+  
+  /create_logical_gateway:
+    post:
+      tags:
+        - User
+        - Hardware
+      summary: "Create a logical gateway"
+      description: Logical gateway created 
+      operationId: CreateLogicalGw
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              logical_gateway:
+                type: array
+                items:
+                  $ref: '#/definitions/LogicalGw'
+              presale:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  state:
+                    type: boolean
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+          
+  /delete_logical_gateway:
+    post:
+      tags:
+        - User
+        - Hardware
+      summary: Remove a gateway ( hardware)
+      description: remove it from your list of gateways. 
+      operationId: deleteLogicalGateway
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              logical_gateway:
+                type: array
+                items:
+                  $ref: '#/definitions/LogicalGw'
+        400:
+          $ref: '#/responses/BadRequest'          
+        403:
+          $ref: '#/responses/Forbidden'
+        500:
+          $ref: '#/responses/InternalServerError'                  
+  
+  /get_gateway_info:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return  gateway info by gateway Id "
+      description: Return  gateway info by gateway Id 
+      operationId: getGatewayInfo
+      parameters:
+        - $ref: '#/parameters/gateway_id'
+      responses:
+        200:
+          description:  Return information about the gateway selected
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              gateway:
+                type: array
+                items:
+                  $ref: '#/definitions/GatewayInfo'                
+  
+  /get_logical_gateway_shares:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return  gateway info by gateway Id "
+      description: Return  gateway info by gateway Id 
+      operationId: getLogicalGwShares
+      parameters:
+        - $ref: '#/parameters/logical_gateway_id'
+      responses:
+        200:
+          description:  Return information about the gateway selected
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              logical_gateway_shares:
+                type: array
+                items:
+                  $ref: '#/definitions/LogicalGatewayShares'   
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /create_logical_gateway_shares:
+    post:
+      tags:
+        - User
+        - Hardware
+      summary: "Create a logical gateway"
+      description: Logical gateway created 
+      operationId: createLogicalGwShares
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A criação foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /get_virtual_devices:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Returns virtual devides"
+      description: This method is called when you want to Add one device to your Hardware , he returns the list of all Virtual Devices for the user to choose.
+      operationId: getVirtualDevices
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              virtual_devices:
+                type: object
+                items:
+                  $ref: '#/definitions/Virtual_devices'        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError' 
+  
+  /save_virtual_devices:
+    post:
+      tags:
+        - User
+        - Hardware
+      summary: "Save a virtual device"
+      description: This method is called when you want to Add one device to your Hardware , he returns the list of all Virtual Devices for the user to select. Once selected this method save the device/s that the user choose for that Hardware.
+      operationId: saveVirtualDevices
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              virtual_devices:
+                type: array
+                items:
+                  $ref: '#/definitions/Save_virtual_devices' 
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'  
+  
+  ##/remove_virtual_devices: not available
+  
+  /get_devices:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return logical gateway  "
+      description: This request is related with a select gateway , in Hardware screen. 
+      operationId: getDevicesGw 
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/gateway_id'
+        
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              limit:
+                type: string
+              total:
+                type: string
+              gateway:
+                type: array
+                items:
+                  $ref: '#/definitions/GatewayTypes'
+              gw_devices: 
+                type: array
+                items: 
+                  $ref: '#/definitions/DataDevicesGw'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError' 
+  
+  /device_members:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return sinal/s for a device "
+      description: Return sinal/s for a device , that is related with one gateway . Returns too gw_device_mebers data. Um exemplo Hardware/teste2paulo1/Controlo direcção pivot - Sinais
+      operationId: getDeviceMembers 
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/state_id'
+        - $ref: '#/parameters/gateway_id'
+        - $ref: '#/parameters/device_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              device_name:
+                type: string
+              gateway_name:
+                type: string
+              gw_device_members:
+                type: array
+                items:
+                  $ref: '#/definitions/Gw_device_members'
+  
+  /change_gateway_owner:
+    post:
+      tags:
+        - User
+        - Hardware
+      summary: "Return logical gateway  "
+      description: This request is related with a select gateway , in Hardware screen. 
+      operationId: changeGatewayOwner
+        
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              limit:
+                type: string
+              total:
+                type: string
+              logical_gateway:
+                type: array
+                items:
+                  $ref: '#/definitions/LogicalGw'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+    
+  
+  /get_gateway_types:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return gateway types "
+      description: Returns the Gateway Types when you want to registrate another device.
+      operationId: getGatewayTypes
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int32
+              GatewayTypes:
+                type: array
+                items:
+                  $ref: '#/definitions/GatewayTypes'
+  
+    
+  /count_connected_logical_gateways:  
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return connected gateways by User id "
+      description: Return connected gateways by User id
+      operationId: getConnectedGateways
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description:  This method returns the number of logical gateways that are active and inactive.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int32
+              active:
+                type: string
+              inactive:
+                type: string
+  
+  
+                  
+  /get_devices/{gateway_id}:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return User settings"
+      description: Returns my settings 
+      operationId: getDevices
+      parameters:
+      - in: path
+        name: gateway_id
+        description: The id of user
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              devices:
+                type: array
+                items:
+                  $ref: '#/definitions/Devices'
+  
+######################################################################################## 
+######################################NOTIFICATIONS#####################################
+########################################################################################
+
+  
+  /gw_notification_types :
+    get:
+      tags:
+        - User
+        - Notifications
+        - Hardware
+      summary: "Return notification type"
+      description: Returns the notification type
+      operationId: getNotificationType
+      responses:
+        200:
+          description:  OK 
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int32
+              notification_type:
+                type: array
+                items:
+                  $ref: '#/definitions/Notification_type'
+  
+  /get_lg_gw_notifications:
+     get:
+      tags:
+        - User
+        - Hardware
+        - Notifications
+      summary: "Return User systems"
+      description: Returns systems  by User id (required)
+      operationId: getlgGatewayNotification
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              notifications:
+                type: object
+                items:
+                  $ref: '#/definitions/GatewayNotification'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /create_lg_gw_notifications:
+    post:
+      tags:
+        - User
+        - Hardware
+        - Notifications
+      summary: "Create a logical gateway"
+      description: Logical gateway created 
+      operationId: CreateLgGwNotifications
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A criação foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              notification_rule:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /delete_lg_gw_notifications:
+    post:
+      tags:
+        - User
+        - Hardware
+        - Notifications
+      summary: "Create a logical gateway"
+      description: Logical gateway created 
+      operationId: DeleteLgGwNotifications
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A remoção foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              notification_rule:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        500:
+          $ref: '#/responses/InternalServerError'   
+######################################################################################## 
+######################################CATEGORIES########################################
+########################################################################################           
+  /get_devices_categories_tree:
+    get:
+      tags:
+        - Categories
+      summary: "Return device categories  "
+      description: Return device categories with parameter User_id
+      operationId: getDeviceCategories 
+      parameters:
+        - $ref: '#/parameters/user_id'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_tree:
+                type: object
+                items:
+                  $ref: '#/definitions/DeviceCategories'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'  
+  /get_user_device_categories:
+    get:
+      tags:
+        - User
+        - Categories
+      summary: "Return user device categories  "
+      description: Return user device categories with parameter User_id, this method is called when you select one Categorie already created by the user
+      operationId: getUserCategories
+      parameters:
+        - $ref: '#/parameters/user_id'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_tree:
+                type: object
+                items:
+                  $ref: '#/definitions/UserDeviceCategories'  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'            
+  /create_update_user_device_categories:
+    post:
+      tags:
+        - User
+        - Categories
+      summary: "Create User device categorie"
+      description: Create or update a device categorie. 
+      operationId: CreateUserDevCategories
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A criação foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /remove_device_category:
+    post:
+      tags:
+        - User
+        - Categories
+      summary: Remove a device category
+      description: Remove a device category
+      operationId: DeleteUserDevCategory
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A remoção foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+            
+              
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'  
+                  
+                  
+  /get_user_full_systems_and_their_app_segments:
+    get:
+      tags:
+        - User
+        - MyAccount
+      summary: "Return User systems "
+      description: Returns systems  by User id (required)
+      operationId: getUserFullSystems
+      parameters:
+        - $ref: '#/parameters/user_id'
+
+      responses:
+        200:
+          description:  SUCCESS
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_system:
+                type: object
+                items:
+                  $ref: '#/definitions/UserFullSystems'
+ ############ bee2Energy#######################
+ 
+  /get_user_systems_location:
+    get:
+      tags:
+        - User
+      summary: "Return user system locations  "
+      description: Return user system locations parameter User_id
+      operationId: getUserSystemsLoca 
+      parameters:
+        - $ref: '#/parameters/user_id'  
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              entities:
+                type: object
+                items:
+                  $ref: '#/definitions/EntitiesLocation'
+              hardware:
+                type: array
+                items:
+                  $ref: '#/definitions/Hardware'
+              locations:
+                type: object
+                items:
+                  $ref: '#/definitions/Locations'
+
+  /get_system_info: # common/user_systems/get_system_info/415?id=415
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return user system locations  "
+      description: This method is requested in the Ecra of Bee2Energy to return the system information by the paramter system_id
+      operationId: getSystemInfo
+      parameters:
+        - $ref: '#/parameters/system_id'  
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_system:
+                type: array
+                items:
+                  $ref: '#/definitions/Info_user_system'
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'            
+          
+  /create_program:
+    post:  
+      tags:
+        - User
+        - Tariffs
+      summary: "Create a program"
+      description: Create a program in Bee2Energy/Operação/
+      operationId: CreateProgram
+      
+      responses:
+        200:
+          description: "A criação foi efectuada com sucesso."
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              program:
+                type: array
+                items:
+                  $ref: '#/definitions/CreateProgram' 
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+          
+  /get_program_list:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return programs list"
+      description: This method is requested in operação , list of programs.
+      operationId: getProgramList
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/state'
+        - $ref: '#/parameters/sync'
+        - $ref: '#/parameters/system_id'
+        
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              notifications:
+                type: object
+                items:
+                  $ref: '#/definitions/ProgramList'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+          
+  /get_program_info:
+     get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return programs information"
+      description: Return the program information in Bee2Energy/operação/Programas
+      operationId: getProgramInfo
+      parameters:
+        - $ref: '#/parameters/program_id'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              entity_groups:
+                type: object
+                items:
+                  $ref: '#/definitions/ProgramInfo'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'  
+  
+  /get_entity_groups_by_system:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return programs list"
+      description: This method is requested in operação , list of programs.
+      operationId: getEntityGroups
+      parameters:
+        - $ref: '#/parameters/user_system_id'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              entity_groups:
+                type: object
+                items:
+                  $ref: '#/definitions/EntityGroups'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /get_recurrence_types:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return programs list"
+      description: This method is requested in operação , list of programs.
+      operationId: getRecurrencetypes
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              recurrence_types:
+                type: object
+                items:
+                  $ref: '#/definitions/RecurrenceTypes'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+    
+  /get_logical_operation_types:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return logical operation types"
+      description: This method is requested in operação , list of programs.
+      operationId: getLogicalOperationTypes
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              logical_operation_types:
+                type: array
+                items:
+                  $ref: '#/definitions/Logical_operation_types'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+    
+  /get_program_actuation_chart_history:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return logical operation types"
+      description: This method is requested in operação , list of programs.
+      operationId: getProgramActuationHistory
+      parameters:
+        - $ref: '#/parameters/end_date'
+        - $ref: '#/parameters/program_id'
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              values:
+                type: object
+                properties:
+                  ValueX:
+                    type: integer
+                    format: int32
+                  ValueY:
+                    type: integer
+                    format: int32  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+    
+  /set_program_state:
+    post:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "change the state of the program "
+      description: This method is requested when we change from Active to Deactivate 
+      operationId: editProgramState
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A alteração foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+          
+  /delete_program:
+     delete:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Delete program in Operação Bee2Energy "
+      description: This method is used when we want to delete a selected program from Operação Bee2Energy
+      operationId: deleteProgram
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A remoção foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /edit_program:
+    patch:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Edit program  "
+      description: This method is requested when updating information in a program
+      operationId: editProgram
+  
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A alteração foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+    
+  /get_holidays_by_year:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Method used creating and editing a program"
+      description: Method use to choose the dates of Feriado and  Férias
+      operationId: getHolidays
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              holidays:
+                type: array
+                items:
+                  $ref: '#/definitions/Holidays'
+                  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /get_system_logical_gateways:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return system logical gateways"
+      description: This method is requested in operação , list of programs.
+      operationId: getSystemLogicalGateway
+      parameters:
+        - $ref: '#/parameters/user_system_id'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              system_logical_gateways:
+                type: array
+                items:
+                  $ref: '#/definitions/System_logical_gateways'
+                  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+    
+  /get_category_info:
+    get:
+      tags:
+        - User
+      summary: "Return Category info"
+      description: category info
+      operationId: getCategoryInfo
+      parameters:
+        - $ref: '#/parameters/device_category_id'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              info:
+                type: object
+                items:
+                  $ref: '#/definitions/DeviceCategory'
+  
+  /get_realtime_devices_by_system:
+     get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return real time devices"
+      description: This method is requested in operação , Realtime menu
+      operationId: getRealtimeDevices
+      parameters:
+        - $ref: '#/parameters/user_system_id'
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              device_types:
+                type: array
+                items:
+                  $ref: '#/definitions/DeviceTypes'
+              devices:
+                type: array
+                items:
+                  $ref: '#/definitions/RealTimeDevices'
+                  
+                  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /get_devices_with_members:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return devices with members"
+      description: This method is requested in operação , Realtime menu
+      operationId: getDevicesMembers
+      parameters:
+        - $ref: '#/parameters/logical_gateway_id'
+        - $ref: '#/parameters/user_system_id'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              device_types:
+                type: array
+                items:
+                  $ref: '#/definitions/RealTimeDeviceTypes'
+              devices_with_members:
+                type: array
+                items:
+                  $ref: '#/definitions/DevicesWithMembers'
+                  
+                  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'
+          
+  /get_device_info:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return device information"
+      description: This method is requested in Operação/ realtime and returns the device information.
+      operationId: getDeviceinfo
+      parameters:
+        - $ref: '#/parameters/device_id'
+        - $ref: '#/parameters/system_id'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              device:
+                type: array
+                items:
+                  $ref: '#/definitions/DevicesInfo'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'  
+          
+  /get_indicator/{id}:
+     get:
+      tags:
+        - User
+        - BackOffice
+      summary: "Return indicator by ID in path"
+      description: This method is requested in Operação/ indicators and returns the information once selected.
+      operationId: getIndicatorInfo
+      parameters:
+      - in: path
+        name: id
+        description: The id of the indicator
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              indicator:
+                type: array
+                items:
+                  $ref: '#/definitions/IndicatorInfo'
+                  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/InternalServerError'  
+          
+  /get_detail_indicator:
+    get:
+      tags:
+        - User
+        - BackOffice
+      summary: "Return details about the Indicator"
+      description: This method is requested in Operação/ indicators and returns some details about the devices relatedwith the indicator.
+      operationId: getDetailIndicator
+      parameters:
+        - $ref: '#/parameters/indicator_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              indicator_details:
+                type: array
+                items:
+                  $ref: '#/definitions/DetailsIndicator'
+                  
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/InternalServerError'  
+  
+  /save_user_system_indicator:
+    post:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "change the state of the program "
+      description: This metod is requested when saving/creating a new indicator ( indicadores)
+      operationId: createIndicator
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A criação foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'  
+          
+  /get_user_system_indicators:
+     get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return device information"
+      description: This method is requested in Operação/ realtime and returns the device information.
+      operationId: getuserSystemIndic
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/system_id'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/filter'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              indicators:
+                type: array
+                items:
+                  $ref: '#/definitions/Indicators'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'  
+  
+  /delete_indicators:
+    post:
+      tags:
+        - User
+        - BackOffice
+      summary: "Delete indicators "
+      description: This method is used when we want to delete a indicator .
+      operationId: deleteIndicator
+  
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A remoção foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+    
+          
+  /get_indicator_types:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return device information"
+      description: This method is requested in Operação/ indicators and returns the indicator types, when creating one new indicator.
+      operationId: getindicatorType
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              device:
+                type: array
+                items:
+                  $ref: '#/definitions/IndicatorType'
+  
+  /get_unit_measures:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return device information"
+      description: This method is requested in Operação/ indicators and returns the unit measures, when creating one new indicator.
+      operationId: getUnitMeasures
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              device:
+                type: array
+                items:
+                  $ref: '#/definitions/UnitMeasures'
+                  
+  /get_activity_history:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return device information"
+      description: This method is requested in Operação/ realtime and returns the Activity History 
+      operationId: getActivityhistory
+      parameters:
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/end_date'
+        - $ref: '#/parameters/user_system_id'
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              activity_list:
+                type: array
+                items:
+                  $ref: '#/definitions/ActivityList'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'            
+        500:
+          $ref: '#/responses/InternalServerError'  
+    
+  /get_activity_history_types:
+    get:
+      tags:
+        - User
+        - Bee2Energy
+      summary: "Return device information"
+      description: This method is requested in Operação/ indicators and returns the indicator types, when creating one new indicator.
+      operationId: getActivityHistoryType
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              device:
+                type: array
+                items:
+                  $ref: '#/definitions/ActivityTypes'
+                  
+  /update_system_device_monitoring:
+    post:
+      tags:
+        - User
+        - Categories
+      summary: "Create User device categorie"
+      description: This method is requested in Operação/ monitorização and returns the devices added and the existing
+      operationId: updateDeviceMonitoring
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/UpdateDeviceMonitoring'
+              
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'  
+    
+######################################################################################## 
+######################################TARIFFS###########################################
+########################################################################################
+
+  /get_suppliers/{country_code}:
+    get:
+      tags:
+        - User
+        - Tariffs
+      summary: "Returns Suppliers for one Country code"
+      description: Returns Suppliers for one Country code
+      operationId: getSuppliers
+      parameters:
+      - in: path
+        name: country_code
+        description: code of the Country
+        required: true
+        type: string
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              suppliers:
+                type: object
+                items:
+                  $ref: '#/definitions/Suppliers'
+                  
+  /get_suppliers_tariffs/{supplier_id}:
+    get:
+      tags:
+        - User
+        - Tariffs
+      summary: "Returns Supplier tariffs by supplier_id"
+      description: Returns Suppliers tariffs by supplier Id
+      operationId: getSuppliersTariffs
+      parameters:
+      - in: path
+        name: supplier_id
+        description: supplier id
+        required: true
+        type: integer
+        format: int32
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              suppliers_tariffs:
+                type: object
+                items:
+                  $ref: '#/definitions/SuppliersTariffs'  
+  
+  /supplier_tariff_contract_lookups/{tariff_id}:
+    get:
+      tags:
+        - User
+        - Tariffs
+      summary: "Returns Suppliers tariffs contract by tariff id"
+      description: Returns Suppliers tariffs contract by tariff id
+      operationId: getSuppliersTariffsContract
+      parameters:
+      - in: path
+        name: tariff_id
+        description: tariff id
+        required: true
+        type: integer
+        format: int32
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              suppliers_tariffs:
+                type: object
+                items:
+                  $ref: '#/definitions/Supplier_tariff_contract'                 
+                  
+  /get_contracts:
+    get:
+      tags:
+        - User
+        - Tariffs
+      summary: "Return User logo"
+      description: Returns Contracts using parameters
+      operationId: getContracts
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              contracts:
+                type: object
+                items:
+                  $ref: '#/definitions/Contracts'                
+        500:
+          $ref: '#/responses/InternalServerError' 
+          
+  /create_contracts:
+    post:
+      tags:
+        - User
+        - Tariffs
+      summary: "Returns Suppliers tariffs contract by tariff id"
+      description: Create a contract , 
+      operationId: CreateContracts
+      
+      responses:
+        200:
+          description: "A criação foi efectuada com sucesso."
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+                  
+                 
+######################################################################################## 
+######################################ENTITIES##########################################
+########################################################################################
+  /get_user_entities_list:
+    get:
+      tags:
+        - User
+        - Hardware
+      summary: "Return User entities "
+      description: Returns user entities  by User id (required), this method is called when you want to share the device with one entity (Partilhar equipamento)
+      operationId: getUserEntitiesList
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+        
+      responses:
+        200:
+          description:  Entities user
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              entities:
+                type: array
+                items:
+                  $ref: '#/definitions/Entities'   
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'          
+######################################################################################## 
+######################################SHARES/PARTILHAS##################################
+########################################################################################
+  
+  /get_systemm_shares_received:
+    get:
+      tags:
+        - Shares
+      summary: "Return system shares received   "
+      description: Return system shares received 
+      operationId: getSystemSharesReceived
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_system_shares:
+                type: object
+                items:
+                  $ref: '#/definitions/UserSystemShares'
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'          
+  
+  /get_systemm_shares_sent:
+    get:
+      tags:
+        - Shares
+      summary: "Return system shares sent "
+      description: Return system shares sent
+      operationId: getSystemSharesSent 
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_system_shares:
+                type: object
+                items:
+                  $ref: '#/definitions/UserSystemShares'           
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+  
+  /user_shareable_systems:
+     get:
+      tags:
+        - Shares
+      summary: "Return shareable user systems "
+      description: This method returns all the shareable systems that are available for the user. My_account/system_shares
+      operationId: getUserShareableSys 
+      parameters:
+        - $ref: '#/parameters/user_id'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user_shareable_systems:
+                type: object
+                items:
+                  $ref: '#/definitions/UserShareableSystems'
+    
+  /share_roles:
+    get:
+      tags:
+        - Shares
+      summary: "Return shareable user systems "
+      description: This method returns all the shareable systems that are available for the user. My_account/system_shares
+      operationId: getShareRoles 
+
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              share_roles:
+                type: object
+                items:
+                  $ref: '#/definitions/ShareRoles'
+                  
+  /edit_user_system_share:
+    patch:
+      tags:
+        - Shares
+      summary: "Return shareable user systems "
+      description: This method is used when we want to edit a user_system_share
+      operationId: editUserSystemShare 
+  
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A alteração foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'       
+          
+  /delete_user_system_share:
+    delete:
+      tags:
+        - Shares
+      summary: "Delete user systems shares "
+      description: This method is used when we want to delete a user_system_share
+      operationId: deleteUserSystemShare 
+  
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "A remoção foi efectuada com sucesso."
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'  
+        500:
+          $ref: '#/responses/InternalServerError'
+          
+          
+          
+######################################################################################## 
+######################################BACKOFFICE########################################
+########################################################################################  
+
+  /get_backoffice_users: # common not my account information 
+    get:
+      tags:
+        - User
+        - BackOffice
+      summary: "Return User information"
+      description: This method is request in the back office menu and Returns a list of all the users that are registred in the IOT platform.
+      operationId: getBackOfficeUsers
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/limit'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              users:
+                type: array
+                items:
+                  $ref: '#/definitions/BackOfficeUsers'  
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'        
+  
+  /create_user:
+    post:
+      tags:
+        - User
+        - BackOffice
+      summary: "Create a User"
+      description: This is a post method to Create a User in the IOT platform.
+      operationId: createUser
+      parameters:
+        - $ref: '#/parameters/user_id'
+      
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              users:
+                type: array
+                items:
+                  $ref: '#/definitions/CreateUser'  
+        
+        400:
+          $ref: '#/responses/BadRequest'
+        403:
+          $ref: '#/responses/Forbidden'
+        404:
+          $ref: '#/responses/NotFound'
+      
+  /update_user:
+    post:
+      tags:
+        - User
+        - BackOffice
+      summary: "Edit user profile"
+      description: Returns the message of succes when edit an user profile.
+      operationId: editUser
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              user:
+                type: string
+                description: "A alteração foi efectuada com sucesso."
+  
+  /lock_user:
+    post:
+      tags:
+        - User
+        - BackOffice
+      summary: "Lock user profile"
+      description: Returns the message of succes when lock an user profile.
+      operationId: lockUser
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "O utilizador foi desativado com sucesso"
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+
+  /get_user_counter:
+    get:
+      tags:
+        - User
+        - BackOffice
+      summary: "Return User information"
+      description: This method is request in the back office menu and Returns the number of user that are Registered in the IOT platform and  the number of active and inactive.
+      operationId: getUserCounter
+      parameters:
+        - $ref: '#/parameters/user_id'
+        
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              users:
+                type: array
+                items:
+                  $ref: '#/definitions/UserCounter'  
+  
+  /get_user_details:
+    get:
+      tags:
+        - User
+        - BackOffice
+      summary: "Return User details"
+      description: This method is request in the back office menu and Returns the details of user that are Registered in the IOT platform.
+      operationId: getUserDetails
+      parameters:
+        - $ref: '#/parameters/user_account_id'
+        
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              permissions:
+                type: array
+                items:
+                  $ref: '#/definitions/UserPermissions'
+              user_accesses:
+                type: array
+                items:
+                  $ref: '#/definitions/UserAccesses'   
+              user_details:
+                type: object
+                items:
+                  $ref: '#/definitions/UserDetails' 
+              user_settings:
+                type: array
+                items:
+                  $ref: '#/definitions/UserSettings'     
+  
+  /get_resselers_list:
+    get:
+      tags:
+        - User
+        - BackOffice
+      summary: "Return Resselers"
+      description: This method is request in the back office menu and Returns the resselers.
+      operationId: getResselers
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              resellers:
+                type: array
+                items:
+                  $ref: '#/definitions/Reseller'
+                  
+  /get_segments_apps_modules:
+    get:
+      tags:
+        - User
+        - BackOffice
+      summary: "Return User information"
+      description: This method is request in the back office menu and Returns the number of user that are Registered in the IOT platform and  the number of active and inactive.
+      operationId: getSegmentAppsModu
+      parameters:
+        - $ref: '#/parameters/user_account_id'
+        
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              segments_apps_modules:
+                type: array
+                items:
+                  - $ref: '#/definitions/SegmentsAppsModules' 
+      
+  /get_all_information_requests:
+    get:
+      tags:
+        - BackOffice
+      summary: "Return information requests"
+      description: This method is request in the back office menu and Returns the "Pedidos de informação" for the user, using filters.
+      operationId: getAllInformation
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/select'
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/end_date'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              information_requests:
+                type: array
+                items:
+                  - $ref: '#/definitions/InformationRequests'  
+  
+  /get_information_requests_counters:
+    get:
+      tags:
+        - BackOffice
+      summary: "Return information requests"
+      description: This method is request in the back office menu and Returns the "Pedidos de informação" for the user, using filters.
+      operationId: getInformationRequestsCounter
+      parameters:
+        - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/end_date'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              counters:
+                type: array
+                items:
+                  - $ref: '#/definitions/RequestedCounters'
+  
+  /mark_information_request_as_read:
+    post:
+      tags:
+        - BackOffice
+      summary: "Lock user profile"
+      description: Returns the message of succes when the request is answered.
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+                description: "Pedido de informação marcado como respondido com sucesso"
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64  
+                
+  /get_probes:
+    get:
+      tags:
+        - BackOffice
+      summary: "Return Sondas"
+      description: This method is request in the back office menu and Returns a list of Sondas.
+      operationId: getSondas
+      parameters:
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/in_service'
+        - $ref: '#/parameters/order_column'
+        - $ref: '#/parameters/order'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              probes:
+                type: array
+                items:
+                  - $ref: '#/definitions/ProbesSondas'  
+  
+  /get_probe_details:
+    get:
+      tags:
+        - BackOffice
+      summary: "Return Sonda detail"
+      description: This method is request in the back office menu and returns the information/details about one gateway
+      operationId: getSondaDetails
+      parameters:
+        - $ref: '#/parameters/gateway_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: number
+              timestamp:
+                type: integer
+                format: int64
+              probes:
+                type: array
+                items:
+                   $ref: '#/definitions/ProbesSondaDetails'                  
+  
+  /get_probe_events:
+    get:
+      tags:
+        - BackOffice
+      summary: "Returns gateway events"
+      description: Returns a list of events related to one specific gateway.
+      operationId: getProbeEvents
+      parameters:
+        - $ref: '#/parameters/logical_gateway_id'
+        - $ref: '#/parameters/end_date'
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/order'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/order_column'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: integer
+                format: int32
+              timestamp:
+                type: integer
+                format: int64
+              total:
+                type: string
+              events:
+                type: array
+                items:
+                   $ref: '#/definitions/ProbeEvents'
+              
+  /save_new_probe:
+    get:
+      tags:
+        - BackOffice
+      summary: "Create new Sonda"
+      description: Creating  a new sonda in the path backoffice/probe/configuration.
+      operationId: saveNewProbe
+      parameters:
+        - $ref: '#/parameters/description'
+        - $ref: '#/parameters/phone_number'
+        - $ref: '#/parameters/external_id'
+        - $ref: '#/parameters/timezone_id'
+        - $ref: '#/parameters/system_id'
+      responses:
+        200:
+          description:  OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              code:
+                type: integer
+                format: int32
+              timestamp:
+                type: integer
+                format: int64
+              total:
+                type: string
+              logical_gateways:
+                type: array
+                items:
+                   $ref: '#/definitions/LogicalGateways'  
+              gateway:
+                type: array
+                items:
+                   $ref: '#/definitions/GatewayInfo'   
+    
+######################################################################################## 
+######################################definitions#######################################
+########################################################################################
+definitions:
+
+  
+  BackOfficeUsers:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string  
+      user_id: 
+        type: integer
+        format: int32
+      email:
+        type: string 
+      language:
+        type: string 
+      user_type:
+        type: string 
+      last_access:
+        type: integer
+        format: int64
+      active:
+        type: boolean
+      image_profile_url:
+        type: string 
+      confirmed:
+        type: boolean
+      vat_number:
+        type: string 
+      ixs: 
+        type: string 
+      user_system_count:
+        type: string 
+      user_system_device_count: 
+        type: string 
+      user_logical_gateways_count: 
+        type: string 
+  
+  UserCounter:
+    type: object
+    properties:
+      active:
+        type: integer
+      inactive:
+        type: integer
+      total:
+        type: integer
+  
+  CreateUser:
+    type: object
+    properties:
+      user_id:
+        type: integer
+        format: int32
+      message:
+        type: string
+        description: "A criação foi efectuada com sucesso."
+  
+  UserDetails:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      user_id: 
+        type: integer
+        format: int32
+      email: 
+        type: string 
+      public_name:
+        type: string 
+      display_name: 
+        type: string 
+      full_name: 
+        type: string 
+      country_id:
+        type: integer
+        format: int32
+      country_desc: 
+        type: string 
+      gender_type_id:
+        type: integer
+        format: int32
+      gender_type_desc:
+        type: string 
+      birth_date:
+        type: string
+        format: date
+      image_profile_url: 
+        type: string 
+      vat_number:
+        type: string
+      active:
+        type: boolean
+      flg_create_system: 
+        type: boolean
+      flg_create_entity:
+        type: boolean
+      reseller:
+        type: array
+        items:
+          $ref: '#/definitions/Reseller'  
+  Reseller:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+  
+  UserPermissions:  
+    type: object
+    properties:
+      entities:
+        type: array
+        items:
+          $ref: '#/definitions/UserPermissionsEntities' 
+      user_systems:
+        type: array
+        items:
+          $ref: '#/definitions/UserPermissionsUserSystems'  
+ 
+  UserPermissionsEntities:
+    type: object
+    properties:
+      id: 
+        type: integer
+        format: int32
+      name:
+        type: string
+      share_role:
+        type: string
+ 
+  UserPermissionsUserSystems:
+    type: object
+    properties:
+      id: 
+        type: integer
+        format: int32
+      name:
+        type: string 
+      app_id:
+        type: integer
+        format: int32
+      app_name: 
+        type: string
+      entity_id: 
+        type: integer
+        format: int32
+      entity_name:
+        type: string
+      share_role: 
+        type: string
+      share_role_id:
+        type: integer
+        format: int32
+      shared_by: 
+        type: string
+      shared_via:
+        type: integer
+        format: int32
+  
+  UserSettings:
+    type: object
+    properties: 
+      id:
+        type: integer
+        format: int32
+      timezone_id:
+        type: integer
+        format: int32
+      timezone_desc: 
+        type: string
+      language_id: 
+        type: integer
+        format: int32
+      language_desc: 
+        type: string
+      date_format_id: 
+        type: integer
+        format: int32
+      date_format_desc: 
+        type: string
+      user_type_id: 
+        type: integer
+        format: int32
+      user_type_desc:   
+        type: string
+      predefined_app_segment_id:
+        type: integer
+        format: int32
+      predefined_user_system_id:
+        type: integer
+        format: int32
+        
+  UserAccesses:
+    type: object
+    properties:
+      node_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      checked:
+        type: boolean
+      subscription_date:
+        type: string
+        format: date-time
+      node_app_segment:
+        type: array
+        items:
+          $ref: '#/definitions/UserAccessesNodes'    
+        description: node related with app_segment
+        
+  UserAccessesNodes:
+    type: object
+    properties:
+      app_segment_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      node_id:
+        type: integer
+        format: int32
+      checked:
+        type: boolean
+      subscription_date:
+        type: string
+        format: date-time
+      node_app_modules:
+        type: array
+        items:
+          $ref: '#/definitions/UserAccessesNodes2'
+        description: node related with app_modules  
+  
+  UserAccessesNodes2:
+    type: object
+    properties:
+      app_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      node_id:
+        type: integer
+        format: int32
+      checked:
+        type: boolean  
+      subscription_date:
+        type: string
+        format: date-time
+  
+  SegmentsAppsModules:
+    type: object
+    properties:
+      node_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      checked:
+        type: boolean
+      node_app_segment:
+        type: array
+        items:
+          $ref: '#/definitions/SegmentsAppsModules2'    
+        description: node related with app_segment
+  SegmentsAppsModules2:
+    type: object
+    properties:
+      node_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      checked:
+        type: boolean
+      app_segment_id:
+        type: integer
+        format: int32
+  InformationRequests:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      email:
+        type: string
+      date:
+        type: integer
+        format: int64
+      message:
+        type: string
+        description: Ex:"Mensagem longa para testar comportamento da side bar right e outras cenas"
+      replied:
+        type: boolean
+      total:
+        type: string
+  RequestedCounters:
+    type: object
+    properties:
+      not_replied:
+        type: string
+      replied:
+       type: string
+      total:
+        type: string
+        
+        
+        
+  UsersAll:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      user_account_id:
+        type: integer
+        format: int32
+          
+  Isalive:
+    type: object
+    properties:
+      info:
+        type: string
+      sessionId:
+        type: integer
+        format: int32
+      user:
+        type: array
+        items:
+          $ref: '#/definitions/UserIsAlive'  
+  
+  UserIsAlive:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      email:
+        type: string
+      display_name:
+        type: string
+      provider:
+        type: string
+      uid:
+        type: integer
+        format: int32
+      admin:
+        type: boolean
+      public_name:
+        type: string
+      full_name: 
+        type: string
+      image_profile_url:
+        type: string
+      birth_date:
+        type: integer
+        format: int64
+      ximi_id:
+        type: integer
+        format: int32
+      phone_number: 
+        type: string
+      default_management_center:
+        type: object
+        items:
+          $ref: '#/definitions/IsAliveManagementCenter' 
+      entities:
+        type: array
+        items:
+          $ref: '#/definitions/IsAliveEntities'
+      settings:
+        type: object
+        items:
+          $ref: '#/definitions/IsAliveSettings'
+  
+  IsAliveManagementCenter:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      entity_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      description:
+        type: string
+      flg_active: 
+        type: boolean
+      flg_deleted:
+        type: boolean
+      creator_id:
+        type: integer
+        format: int32
+      updater_id:
+        type: integer
+        format: int32
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+      deleted_at:
+        type: string
+        format: date-time
+      external_id:
+        type: integer
+        format: int32
+        
+  IsAliveEntities:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      logo:
+        type: string
+      name: 
+        type: string
+      state:
+        type: string
+      state_params:
+        type: object
+        items:
+          $ref: '#/definitions/IsAliveStateParams' 
+  
+  IsAliveStateParams:
+    type: object
+    properties:
+      entity_id:
+        type: integer
+        format: int32 
+  
+  IsAliveSettings:
+    type: object
+    properties:
+      locale:
+        type: string
+      timezone:
+        type: string
+      language: 
+        type: string
+      date_mask:
+        type: string
+        format: date-time
+      hour_mask:
+        type: string
+        format: date-time
+      date_hour_mask: 
+        type: string
+        format: date-time
+      long_date_mask: 
+        type: string
+        format: date-time
+      long_date_hour_mask: 
+        type: string
+        format: date-time
+      predefined_app_segment_id:
+        type: integer
+        format: int32
+      user_type_id:
+        type: integer
+        format: int32
+      predefined_user_system:
+        type: object
+        items:
+          $ref: '#/definitions/IsAlivePredifinedSystem'  
+  
+  IsAlivePredifinedSystem:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      app_state:
+        type: string
+        
+  UserAccount:
+    type: object
+    properties:
+      birth_date:  
+        type: string
+      country_id:
+        type: integer
+        format: int32
+      country_desc:
+        type: string
+      display_name:
+        type: string
+      email:
+        type: string
+      full_name: 
+        type: string
+      gender_type_desc:
+        type: string
+      gender_type_id:
+        type: integer
+        format: int32
+      image_profile_url:
+        type: string
+      public_name:
+        type: string
+      vat_number:
+        type: number
+      management_centers:
+        type: array
+        items:
+          $ref: '#/definitions/DefaultManagementCenter'
+      user_acc_settings:
+        type: array
+        items: 
+          $ref: '#/definitions/UserAccSettings'
+        
+  Notifications:
+    type: object
+    properties:
+      id:  
+        type: integer
+        format: int32
+      user_account_id:
+        type: integer
+        format: int32
+      title:
+        type: string
+      message:
+        type: string
+      notification_type_id:
+        type: integer
+        format: int32
+      image_type: 
+        type: string
+      image:
+        type: string
+      state:
+        type: string
+      read:
+        type: boolean
+        
+  Notification_type:
+    type: object
+    properties:
+      id:  
+        type: integer
+        format: int32
+      name:
+        type: string
+      internal_description:
+        type: string
+
+  Countries:
+    type: object
+    properties:
+      id:  
+        type: integer
+        format: int32
+      name:
+        type: string
+      country_code:
+        type: string
+        
+  UserGenderType:
+    type: object
+    properties:
+      id:  
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  Languages:
+    type: object
+    properties:
+      id:  
+        type: integer
+        format: int32
+      name:
+        type: string
+      country_code:
+        type: string
+        
+  LanguageUserSetting:
+    type: object
+    properties:
+      id: 
+         type: integer
+         format: int32
+      internal_code:
+        type: string
+      description: 
+        type: string
+      country_code:
+        type: string
+        
+  TimeZones:
+    type: object
+    properties:
+      id:  
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  TimezoneUserSetting:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      country_code:
+        type: string
+      utc_offset:
+        type: string
+        format: date-time      
+        
+  UserTypes:
+    type: object
+    properties:
+      id:  
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  UserTypeUserSetting:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      internal_code:
+        type: string
+      internal_description:
+        type: string
+                  
+  DateFormats:
+    type: object
+    properties:
+      id:  
+        type: integer
+        format: int32
+      name:
+        type: string      
+        
+  DateFormatUserSetting:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      internal_code:
+        type: string
+      internal_description:
+        type: string
+      locale:
+        type: string
+  
+  DefaultManagementCenter:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      management_center_id:
+        type: integer
+        format: int32
+      user_account_id:
+        type: integer
+        format: int32
+      flg_deleted:
+        type: boolean
+      creator_id:
+        type: integer
+        format: int32
+      updater_id: 
+        type: integer
+        format: int32
+      created_at:
+        type: string
+        format: date-time
+      updated_at: 
+        type: string
+        format: date-time
+      deleted_at:
+        type: string
+        format: date-time
+      is_default:
+        type: boolean
+        
+        
+  ManagementCenters:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      external_id:
+        type: integer
+        format: int32
+  
+  UserAccSettings:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      language_id:
+        type: integer
+        format: int32
+      date_format_id:
+        type: integer
+        format: int32
+      timezone_id:
+        type: integer
+        format: int32
+  
+  Apps:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      segment_id:
+        type: integer
+        format: int32
+      segment_state:
+        type: string
+      icon:
+        type: string
+      state:
+        type: string
+      name:
+        type: string
+      direction:
+        type: string
+ 
+  AppsSegments:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      icon:
+        type: string
+      direction:
+        type: string
+      state: 
+        type: string
+      name:
+        type: string
+      visible:
+        type: boolean
+  
+  AppGroups:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  AppCategories:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  CategorizedApps:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      icon:
+        type: string
+      price:
+        type: string
+      state:
+        type: string
+      current_state:
+        type: string
+      description:
+        type: string
+      groups:
+        type: string # sera um array com objectos mas como não retorna os dados nao consigo completar
+      categories:
+        type: string # sera um array com objectos mas como não retorna os dados nao consigo completar
+     
+  UserSystems:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      limit:
+        type: string
+      message:
+        type: string
+      status: 
+        type: string
+      total:
+        type: string
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DataUserSystems'
+          
+  DataUserSystems:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      app_id:
+        type: integer
+        format: int32
+      app_state:
+        type: string
+      name:
+        type: string
+      app:
+        type: string
+      owner:
+        type: string
+      system_owener:
+        type: boolean
+        
+  SystemTypes:
+    type: object
+    properties:
+      0:
+        type: string
+      1:
+        type: string
+      
+  Entities:
+    type: object
+    properties:
+      code:
+        type: number
+      limit:
+        type: string
+      message:
+        type: string
+      status: 
+        type: string
+      total:
+        type: string
+      timestamp:  
+        type: string
+        format: date-time
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DataEntities'
+  
+  DataEntities: 
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      description:
+        type: string
+        
+  EntitiesBranding:
+    type: object
+    properties:
+      adress_city:
+        type: string
+      adress_country_code:
+        type: string
+      address_postal_code_1:
+        type: string
+      address_postal_code_2: 
+        type: string
+      address_postal_code_location:
+        type: string
+      address_street:  
+        type: string
+      email:
+        type: string
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:
+        type: number
+        format: float
+      id:
+        type: integer
+        format: int32
+      logo_url:
+        type: string
+      name:
+        type: string
+      nif:
+        type: string
+      phone:
+        type: string
+  
+  Menus:
+    type: object
+    properties:
+      app_header_menu_id:
+        type: integer
+        format: int32
+      id:
+        type: integer
+        format: int32  
+      label:
+        type: string
+      material_icon:
+        type: string
+      state: 
+        type: string
+      share_role_id:
+        type: integer
+        format: int32
+      my_share_role_id:  
+        type: integer
+        format: int32
+      share_role_internal_code:
+        type: string
+      flg_read:
+        type: boolean
+      flg_write:
+        type: boolean
+      flg_create:
+        type: boolean
+      flg_remove:
+        type: boolean
+      flg_program:
+        type: boolean
+
+  History:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      last_record:
+        type: string
+      name:
+        type: string
+      app_state: 
+        type: string
+      icon:
+        type: string
+        
+  GatewayTypes:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  LogicalGateways:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      external_id:  
+        type: integer
+        format: int32
+      decimal_id:
+        type: integer
+        format: int32
+      gateway_type_id:
+        type: integer
+        format: int32
+      gateway_type:
+        type: string
+      gateway_id:
+        type: integer
+        format: int32  
+      timezone_id:
+        type: integer
+        format: int32
+      user_account_id:
+        type: integer
+        format: int32
+      updater_id:
+        type: integer
+        format: int32
+      last_upd:
+        type: string
+      last_touch_dt_utc:
+        type: string
+        format: date-time
+      communication_state:
+        type: string
+      flg_active:
+        type: boolean
+      flg_sync:
+        type: boolean
+      flg_deleted:
+        type: boolean  
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      delete_at:
+        type: string  
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:  
+        type: number
+        format: float
+      owner_id:
+        type: integer
+        format: int32
+      total:
+        type: string
+      gps_description:
+        type: string
+            
+  DataGateways:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      external_id:  
+        type: integer
+        format: int32
+      decimal_id:
+        type: integer
+        format: int32
+      gateway_type_id:
+        type: integer
+        format: int32
+      gateway_type:
+        type: string
+      gateway_id:
+        type: integer
+        format: int32  
+      timezone_id:
+        type: integer
+        format: int32
+      user_account_id:
+        type: integer
+        format: int32
+      last_upd:
+        type: string
+      last_touch_dt_utc:
+        type: string
+        format: date-time
+      communication_state:
+        type: string
+      flg_active:
+        type: boolean
+      flg_sync:
+        type: boolean
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:  
+        type: number
+        format: float
+      owner_id:
+        type: integer
+        format: int32
+        
+  LogicalGatewayShares:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      context:
+        type: string
+    
+  DataDevicesGw:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      external_id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      external_name:
+        type: string
+      external_device_type:
+        type: string
+      external_device_type_id:
+        type: integer
+        format: int32
+      external_driver:
+        type: string
+      gps_longitude:
+        type: number
+        format: float
+      gps_latitude:
+        type: number
+        format: float
+      flg_sync:
+        type: boolean
+      display_name:
+        type: string
+      virtual_device_id:
+        type: integer
+        format: int32
+      refresh_interval: 
+        type: string
+    
+  GatewayInfo:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      external_id:
+        type: integer
+        format: int32
+      external_dt_upd:
+        type: string
+      decimal_id:
+        type: integer
+        format: int32
+      version:
+        type: string
+      gateway_type_id:
+        type: integer
+        format: int32
+      system_file_dt_utc:
+        type: string
+        format: date-time
+      last_log_dt_utc:
+        type: string
+        format: date-time
+      last_touch_dt_utc:
+        type: string
+        format: date-time
+      last_upd:
+        type: string
+        format: date-time
+      athena_key:
+        type: string
+      remote_address:
+        type: string
+      firmware_build:
+        type: string
+      project_name:
+        type: string
+      project_date_time:
+        type: string
+        format: date-time
+      connector_key:
+        type: string
+      last_com_notif_dt:
+        type: string
+        format: date-time
+      uptime:
+        type: string
+      last_filter:
+        type: string
+      flg_deleted:
+        type: boolean
+      creator_id:
+        type: integer
+        format: int32
+      updater_id:
+        type: integer
+        format: int32
+      created_at:
+        type: integer
+        format: int32
+      updated_at:
+        type: string
+        format: date-time
+      deleted_at:
+        type: string
+        format: date-time
+      is_connected:
+        type: boolean
+      additional_info:
+        type: string
+      last_notification_dt_utc:
+        type: string
+        format: date-time
+  
+  LogicalGw:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      external_id:
+        type: integer
+        format: int32
+      gateway_id:
+        type: integer
+        format: int32
+      timezone_id:
+        type: integer
+        format: int32
+      user_account_id:
+        type: integer
+        format: int32
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:
+        type: number
+        format: float
+      gps_description:
+        type: string
+      last_upd:
+        type: string
+        format: date-time
+      last_touch_dt_utc:
+        type: string
+        format: date-time
+      flg_active: 
+        type: boolean
+      flg_deleted:
+        type: boolean
+      creator_id:
+        type: integer
+        format: int32
+      updater_id:
+        type: integer
+        format: int32
+      created_at: 
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+      deleted_at:
+        type: string
+        format: date-time
+      is_connected:
+        type: boolean
+      reseller_hardware_id:
+        type: integer
+        format: int32
+      logical_gateway_state_id:
+        type: integer
+        format: int32
+      observations: 
+        type: string
+      flg_sync: 
+        type: boolean
+    
+  UserFullSystems:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      app_segment_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  DeviceCategories:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      app_id:
+        type: integer
+        format: int32
+      gateway_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      alias:
+        type: string
+      flg_system:
+        type: boolean
+      user_tree_type_id:
+        type: integer
+        format: int32
+      icon_url:
+        type: string
+      user_system_id:
+        type: integer
+        format: int32  
+      entity_id:
+        type: integer
+        format: int32
+      node_id:
+        type: integer
+        format: int32  
+      parent_id:
+        type: integer
+        format: int32
+      gps_lat:
+        type: number
+        format: float
+      gps_long:
+        type: number
+        format: float
+      state:
+        type: string
+      node_type:
+        type: string
+      flg_admin:
+        type: boolean
+      nodrag:
+        type: boolean
+      nodrop:
+        type: boolean
+      device_type_id:
+        type: integer
+        format: int32
+      device_type_img:
+        type: string
+      indicator_type_img:
+        type: string
+      min:
+        type: string
+      max: 
+        type: string
+      med: 
+        type: string
+      acc: 
+        type: string
+      internal_code:
+        type: string
+      acc_symbol: 
+        type: string
+      med_symbol: 
+        type: string
+      max_symbol: 
+        type: string
+      min_symbol: 
+        type: string
+      cpe:
+        type: string
+      available_as_kpi: 
+        type: boolean
+      ###nodes: []  
+  
+  UserDeviceCategories:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      app_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      parent_id:
+        type: integer
+        format: int32
+    
+  DataNotification:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      external_id:  
+        type: integer
+        format: int32
+      logical_getway_id:
+        type: integer
+        format: int32
+      notification_type_id:
+        type: integer
+        format: int32
+      notification_type:
+        type: string
+      phone_numbers_to_notify:
+        type: string
+      ref_value:
+        type: string
+      emails_to_notify:
+        type: string
+    
+  GatewayNotification:
+      type: object
+      properties:
+        code:
+          type: string
+        limit:
+          type: string
+        total:
+          type: string
+        data:
+          type: array
+          items: 
+            $ref: '#/definitions/DataNotification'
+            
+    
+  ###############TERMINAR##################      
+  Dashboard:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      flag_active:
+        type: boolean
+      name:
+        type: string
+      rank: 
+        type: string
+      permission_id:
+        type: integer
+        format: int32
+      internal_key:
+        type: string
+      additional_info::
+        type: string
+      rows:
+        type: array
+        items:
+          $ref: '#/definitions/RowsWidgets'
+  
+  RowsWidgets:
+    type: object
+    properties:
+      dashboard_detail_id:
+        type: integer
+        format: int32
+      dashboard_id:
+        type: integer
+        format: int32
+      flg_by_user: 
+        type: boolean
+      layout_column:
+        type: integer
+        format: int32
+      layout_dimension:
+        type: integer
+        format: int32
+      layout_row:
+        type: integer
+        format: int32
+      widget_id:
+        type: integer
+        format: int32  
+      widget_key: 
+        type: string
+      options: 
+        type: array
+        items:
+          $ref: '#/definitions/WidgetsOptions'
+  
+  WidgetsOptions:
+    type: object
+    properties:
+      showCosts:
+        type: boolean
+      title :
+        type: string
+      user_system_id:
+        type: integer
+        format: int32
+      uuid:
+        type: string
+      filter_by:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name:
+            type: string
+          hashKey:
+            type: string
+  
+            
+  Acess_log:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      user_system_id: 
+        type: integer
+        format: int32
+      user_account_id:
+        type: integer
+        format: int32
+      creator_id:
+        type: integer
+        format: int32
+      updater_id:
+        type: integer
+        format: int32
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+        
+  Info_user_system:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      user_account_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      description:
+        type: string
+      unit_price:
+        type: string
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:
+        type: number
+        format: float
+      gps_description:
+        type: string
+      gps_location:
+        type: string
+      #remarks:
+      #integrations
+      flg_public:
+        type: boolean
+      flg_active:
+        type: boolean
+      general_irrigation:
+        type: string
+      image_profile_url:
+        type: string
+      system_location_type:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      access_type:
+        type: string
+      app:
+        type: object
+        items: 
+          $ref: '#/definitions/UserSystemApp'
+      owner:
+        type: object
+        items: 
+          $ref: '#/definitions/UserSytemOwner'
+      share_info:
+        type: object
+        items: 
+          $ref: '#/definitions/ShareInfo'    
+          
+  UserSystemApp:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+    
+  UserSytemOwner:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      dispaly_name:
+        type: string
+        
+  ShareInfo:
+    type: object
+    properties:
+      shared_at:
+        type: string
+        format: date-time
+      shared_by:
+        type: string
+    
+  Submenus:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      internal_code:
+        type: string
+      rank:
+        type: string
+      url_state:
+        type: string
+  
+  EntitiesLocation:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      state:
+        type: string
+      coords:
+        type: array
+        items: 
+           $ref: '#/definitions/Coordinates'
+  
+  Coordinates:
+    type: object
+    properties: 
+      latitude:
+        type: number
+        format: float
+      longitude:
+        type: number
+        format: float
+  
+  Hardware:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      external_id:
+        type: integer
+        format: int32
+      gateway_id:
+        type: string
+      is_connected:
+        type: boolean
+      last_touch_dt_utc:
+        type: string
+        format: date-time
+      last_upd:
+        type: string
+        format: date-time
+      state:
+        type: string
+      icon_marker_url:
+        type: string
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:
+        type: number
+        format: float
+      flg_active:
+        type: boolean
+        
+  Locations:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      user_id:
+        type: integer
+        format: int32
+      internal_code:
+        type: string
+      internal_description:
+        type: string
+      app_id:
+        type: integer
+        format: int32
+      communication_state_id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      flg_active:
+        type: boolean
+      flg_public:
+        type: boolean
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:
+        type: number
+        format: float
+      icon_mark_url:
+        type: string
+      icon_url:
+        type: string
+      systemboards_tabs_widgets_configuration:
+        type: string
+      state:
+        type: string
+        
+  UserShareableSystems:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      role_id:
+        type: integer
+        format: int32
+      app_name:
+        type: string
+      name:
+        type: string
+  
+  ShareRoles:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      description:
+        type: string
+      name:
+        type: string
+    
+  
+  UserSystemShares:
+    type: object
+    properties:
+      limit:
+        type: string
+      total:
+        type: string
+      data:
+        type: array
+        items: 
+          $ref: '#/definitions/SystemSharesData'
+        
+  SystemSharesData:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      system_id:
+        type: integer
+        format: int32
+      system_name:
+        type: string
+      app_id: 
+        type: integer
+        format: int32
+      shared_by:
+        type: string
+      email:
+        type: string
+      confirmed:
+        type: boolean
+      confirmed_at:
+        type: string
+        format: date-time
+      share_role_id: 
+        type: integer
+        format: int32
+      share_role_name:
+        type: string
+  
+        
+  DeviceCategory:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      device_type_id:
+        type: integer
+        format: int32
+      acc:
+        type: string
+      acc_symbol: 
+        type: string
+      internal_code:
+        type: string
+      max:
+        type: string
+      max_symbol:
+        type: string  
+      med:
+        type: string
+      med_symbol:
+        type: string
+      min:
+        type: string
+      min_symbol:
+        type: string
+      name:
+        type: string
+        
+  Gw_device_members:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      total:
+        type: string
+      name: 
+        type: string
+      device_id:
+        type: integer
+        format: int32
+      unit_measure:
+        type: string
+      unit_measure_id:
+        type: integer
+        format: int32
+      min_value:
+        type: string
+      max_value:
+        type: string
+      decimal_precision:
+        type: string
+      last_value:
+        type: string
+      last_update:
+        type: integer
+        format: int64
+      ref_value:
+        type: string
+      allow_calculations:
+        type: boolean
+
+  UserProfileEdit:
+    type: object
+    properties:
+      birth_date:  
+        type: string
+      country_id:
+        type: integer
+        format: int32
+      country_desc:
+        type: string
+      display_name:
+        type: string
+      email:
+        type: string
+      full_name: 
+        type: string
+      gender_type_desc:
+        type: string
+      gender_type_id:
+        type: integer
+        format: int32
+      image_profile_url:
+        type: string
+      public_name:
+        type: string
+      vat_number:
+        type: number
+      management_centers:
+        type: array
+        items:
+          $ref: '#/definitions/DefaultManagementCenter'
+      user_acc_settings:
+        type: array
+        items: 
+          $ref: '#/definitions/UserAccSettings'
+    
+  UserProfileEditReturn:
+    type: object
+    properties:
+      birth_date:  
+        type: string
+      country_id:
+        type: integer
+        format: int32
+      country_desc:
+        type: string
+      display_name:
+        type: string
+      email:
+        type: string
+      full_name: 
+        type: string
+      gender_type_desc:
+        type: string
+      gender_type_id:
+        type: integer
+        format: int32
+      image_profile_url:
+        type: string
+      public_name:
+        type: string
+      vat_number:
+        type: number
+      management_centers:
+        type: array
+        items:
+          $ref: '#/definitions/DefaultManagementCenter'
+      user_acc_settings:
+        type: array
+        items: 
+          $ref: '#/definitions/UserAccSettings'
+   
+  Contracts:
+    type: object
+    properties:
+      total:
+        type: string
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DataContracts'
+        
+  DataContracts:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name: 
+        type: string
+      entity_id:
+        type: integer
+        format: int32
+      supplier_id: 
+        type: integer
+        format: int32
+      supplier_name:
+        type: string
+      start_date:
+        type: integer
+        format: int64
+      end_date:
+        type: integer
+        format: int64
+      flg_active:
+        type: boolean
+      country_code:
+        type: string
+      notes:
+        type: string
+      tariff_id: 
+        type: integer
+        format: int32
+      tariff_tension_level_id: 
+        type: integer
+        format: int32
+      tariff_fare_id: 
+        type: integer
+        format: int32
+      tariff_power_demand_id: 
+        type: integer
+        format: int32
+      contract_tariff_version:
+        type: string
+      tariff_version: 
+        type: string
+      numOfDevices: 
+        type: string
+        
+  Suppliers:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name: 
+        type: string
+  SuppliersTariffs:      
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name: 
+        type: string
+      tariff_version:
+        type: string
+  
+  Supplier_tariff_contract:      
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name: 
+        type: string
+      tariff_fares:
+        type: array
+        items:
+          $ref: '#/definitions/TariffsFares'
+  
+  TariffsFares:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name: 
+        type: string
+      tariff_power_demands:
+        type: array
+        items:
+          $ref: '#/definitions/TariffsPowerDemands'  
+          
+  TariffsPowerDemands:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name: 
+        type: string
+  
+  Virtual_devices:
+    type: object
+    properties:
+      id: 
+        type: integer
+        format: int32
+      device_name: 
+        type: string
+      device_member:
+        type: string
+      gateway_parameter:
+        type: string
+      unit_measure_id:
+        type: integer
+        format: int32
+      device_type_id:
+        type: integer
+        format: int32
+  
+  Save_virtual_devices:
+    type: object
+    properties:
+      id: 
+        type: integer
+        format: int32
+        
+  Devices:
+    type: object
+    properties:
+      id: 
+        type: integer
+        format: int32
+      description:
+        type: string
+      external_id:
+        type: integer
+        format: int32
+      external_name:
+        type: string
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:
+        type: number
+        format: float
+        
+  ProbesSondas:
+    type: object
+    properties:
+      acc_x: 
+        type: string
+      acc_y:
+        type: string
+      acc_z: 
+        type: string
+      alarms_not_sent:
+        type: integer
+        format: int32
+      battery_level:
+        type: string
+      cell_id:
+        type: integer
+        format: int32
+      configs_not_sent: 
+        type: integer
+        format: int32
+      container_id:
+        type: integer
+        format: int32
+      container_number:
+        type: string
+      description: 
+        type: string
+      distance:
+        type: string
+      frame_configuration:
+        type: string
+      frame_message: 
+        type: string
+      gateway_id:
+        type: integer
+        format: int32
+      gsm_level: 
+        type: string
+      imei: 
+        type: string
+      last_configuration_date: 
+        type: string
+      last_touch_dt_utc:
+        type: string
+        format: date-time
+      latitude:
+        type: string
+      location_area_code: 
+        type: string
+      logical_gateway:
+        type: string
+      longitude: 
+        type: string
+      message: 
+        type: string
+      mobile_country_code: 
+        type: string
+      mobile_network_code:
+        type: string
+      num_comunications: 
+        type: string
+      phone_number:
+        type: string
+      seven_days_alarms:  
+        type: string
+      seven_days_measures: 
+        type: string
+      seven_days_total: 
+        type: string
+      sim_configuration:
+        type: string
+      system_id:
+        type: integer
+        format: int32
+      system_name:
+        type: string
+      temperature:
+        type: string
+      template:
+        type: string
+      total_records:
+        type: string
+    
+  ProbesSondaDetails:
+    type: object
+    properties:   
+      acc_x: 
+        type: integer
+        format: int32
+      acc_y:
+        type: integer
+        format: int32
+      acc_z:
+        type: integer
+        format: int32
+      alarm_config_id:
+        type: integer
+        format: int32
+      alarm_configuration:
+        type: string
+      battery_level: 
+        type: integer
+        format: int32
+      cell_id:
+        type: integer
+        format: int32
+      config_id:
+        type: integer
+        format: int32
+      current_alarm:
+        type: string
+      current_configuration:
+        type: string
+      description: 
+        type: string
+      distance:
+        type: integer
+        format: int32
+      frame_configuration:
+        type: string
+      gateway_id: 
+        type: integer
+        format: int32
+      gsm_level:
+        type: integer
+        format: int32
+      id: 
+        type: integer
+        format: int32
+      imei: 
+        type: string
+      last_7_days_alarm_messages:
+        type: string
+      last_7_days_measure_messages:
+        type: string
+      last_alarm_date: 
+        type: integer
+        format: int32
+      last_config_date:
+        type: integer
+        format: int3
+      last_touch_dt_utc: 
+        type: integer
+        format: int32
+      latitude: 
+        type: string
+      location_area_code:
+        type: string
+      longitude:
+        type: string
+      mobile_country_code:
+        type: integer
+        format: int32
+      mobile_network_code:
+        type: integer
+        format: int32
+      number_of_satellites:
+        type: string
+      pendent_alarms:
+        type: integer
+        format: int32
+      pendent_configs: 
+        type: integer
+        format: int32
+      phone_number:
+        type: string
+      probe_configuration_template_id:
+        type: integer
+        format: int32
+      searchable_idx: 
+        type: string
+      server_configuration:
+        type: string
+      sim_configuration:
+        type: string
+      system_id:
+        type: integer
+        format: int32
+      system_name:
+        type: string
+      temperature:
+        type: string
+      timezone_id:
+        type: integer
+        format: int32  
+      container:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int32
+            inventory_number:
+              type: string
+              
+  ProbeEvents:
+    type: object
+    properties:   
+      acc_x: 
+        type: integer
+        format: int32
+      acc_y:
+        type: integer
+        format: int32
+      acc_z:
+        type: integer
+        format: int32
+      battery_level:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      data_utc:
+        type: string
+        format: date-time
+      distance:
+        type: string
+      flg_accelerometer_alarm:
+        type: integer
+        format: int32
+      flg_alarm:
+        type: integer
+        format: int32
+      flg_distance_alarm:
+        type: integer
+        format: int32
+      flg_position:
+        type: integer
+        format: int32
+      flg_temperature_alarm:
+        type: integer
+        format: int32
+      log_dt:
+        type: string
+        format: date-time
+      position:
+        type: string
+      temperature:
+        type: string
+      total_records:
+        type: string
+  
+  CreateProgram:
+    type: object
+    properties:
+      conditions_during_time_h:
+        type: integer
+        format: int32
+      conditions_during_time_m:
+        type: integer
+        format: int32
+      conditions_during_time_s:
+        type: integer
+        format: int32
+      conditions_logical_operation:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      creator_id:
+        type: integer
+        format: int32
+      deleted_at:
+        type: string
+        format: date-time
+      description:
+        type: string
+      flg_active:
+        type: boolean
+      flg_deleted:
+        type: boolean
+      flg_sync:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      last_execution_at:
+        type: string
+        format: boolean
+      logical_gateway_id:
+        type: integer
+        format: int32
+      program_execution_state_id:
+        type: integer
+        format: int32
+      updated_at:
+        type: string
+        format: date-time
+      updater_id:
+        type: integer
+        format: int32
+      user_system_id:
+        type: integer
+        format: int32
+  
+  ProgramList:
+    type: object
+    properties:
+      created_at:
+        type: string
+        format: date-time
+      description:
+        type: string
+      flg_active:
+        type: boolean
+      flg_sync:
+        type: boolean
+      gateway_decimal_id:
+        type: integer
+        format: int32
+      id:
+        type: integer
+        format: int32
+      last_run_at:
+        type: integer
+        format: int64
+      logical_gateway_id:
+        type: integer
+        format: int32
+      program_execution_state_name:
+        type: string
+      program_state:
+        type: integer
+        format: int32
+      updater_id:
+        type: integer
+        format: int32
+      update_at:
+        type: string
+        format: date-time
+  
+  ProgramInfo:
+    type: object
+    properties:
+      conditions_during_time_h:
+        type: integer
+        format: int32
+      conditions_during_time_m:
+        type: integer
+        format: int32
+      conditions_during_time_s:
+        type: integer
+        format: int32
+      conditions_logical_operation:
+        type: string
+      description:
+        type: string
+      flg_active:
+        type: boolean
+      flg_sync:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      last_execution_at:
+        type: string
+        format: date-time
+      logical_gateway_id:
+        type: integer
+        format: int32
+      program_execution_state_id:
+        type: integer
+        format: int32  
+      user_system_id:
+        type: integer
+        format: int32 
+      program_actions:
+        type: array
+        items:
+          $ref: '#/definitions/Program_actions'
+      program_conditions:
+        type: array
+        items:
+          $ref: '#/definitions/Program_conditions'
+      program_notifications:
+        type: array
+        items:
+          $ref: '#/definitions/Program_notifications'
+      program_recurrence:
+        type: array
+        items:
+          $ref: '#/definitions/Program_recurrence'
+      program_time_exceptions:
+        type: array
+        items:
+          $ref: '#/definitions/Program_time_exeptions'
+      program_time_periods:
+        type: array
+        items:
+          $ref: '#/definitions/Program_time_periods'
+  
+  
+  Program_actions:
+    type: object
+    properties:
+      device_id:
+        type: integer
+        format: int32
+      device_member_id:
+        type: integer
+        format: int32
+      device_member_selected:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name:
+            type: string
+      device_selected:
+        type: array
+        items:
+          $ref: '#/definitions/Program_device_selected'
+      flg_on_off:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      program_id:
+        type: integer
+        format: int32
+      value:
+        type: string
+  Program_recurrence:
+    type: object
+    properties:
+      all_days_flg:
+        type: boolean
+      created_at:
+        type: string
+        format: date-time
+      creator_id:
+        type: integer
+        format: int32
+      deleted_at:
+        type: string
+        format: date-time
+      flg_active:
+        type: boolean
+      flg_deleted:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      program_id:
+        type: integer
+        format: int32
+      recurrence_type_id:
+        type: integer
+        format: int32
+      updated_at:
+        type: string
+        format: date-time
+      updater_id:
+        type: integer
+        format: int32
+      weekday_1_flg:
+        type: boolean
+      weekday_2_flg:
+        type: boolean
+      weekday_3_flg:
+        type: boolean
+      weekday_4_flg:
+        type: boolean
+      weekday_5_flg:
+        type: boolean
+      weekday_6_flg:
+        type: boolean
+      weekday_7_flg:
+        type: boolean
+  Program_conditions:
+    type: object
+    properties:
+      comparison_term_id:
+        type: integer
+        format: int32
+      comparison_term_selected:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name:
+            type: string
+      comparison_type_id:
+        type: integer
+        format: int32
+      comparison_type_selected:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name:
+            type: string
+          presentation_img:
+            type: string
+      device_id:
+        type: integer
+        format: int32
+      device_member_id:
+        type: integer
+        format: int32
+      device_member_selected:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name:
+            type: string
+      device_selected:
+        type: array
+        items:
+          $ref: '#/definitions/Program_device_selected'
+      end_time_value_h:
+        type: integer
+        format: int32
+      end_time_value_m:
+        type: integer
+        format: int32
+      end_time_value_s:
+        type: integer
+        format: int32
+      id:
+        type: integer
+        format: int32
+      program_id:
+        type: integer
+        format: int32
+      time_value_h:
+        type: integer
+        format: int32
+      time_value_m:
+        type: integer
+        format: int32
+      time_value_s:
+        type: integer
+        format: int32
+      value:
+        type: string
+      value_offset:
+        type: string
+  Program_notifications:
+    type: object
+    properties:
+      created_at:
+        type: string
+        format: date-time
+      creator_id:
+        type: integer
+        format: int32
+      deleted_at:
+        type: string
+        format: date-time
+      email:
+        type: string
+      flg_deleted:
+        type: boolean
+      group_id:
+        type: integer
+        format: int32
+      id:
+        type: integer
+        format: int32
+      message:
+        type: string
+      notify_every_time_m:
+        type: string  
+      phone:
+        type: string
+      program_id:
+        type: integer
+        format: int32
+      updated_at:
+        type: string
+        format: date-time
+      updater_id:
+        type: integer
+        format: int32
+  Program_time_periods:
+    type: object
+    properties:
+      created_at:
+        type: string
+        format: date-time
+      creator_id:
+        type: integer
+        format: int32
+      deleted_at:
+        type: string
+        format: date-time
+      end_date_d:
+        type: integer
+        format: int32
+      end_date_m:
+        type: integer
+        format: int32
+      end_date_y:
+        type: integer
+        format: int32
+      end_time_h:
+        type: integer
+        format: int32
+      end_time_m:
+        type: integer
+        format: int32
+      end_time_s:
+        type: integer
+        format: int32
+      flg_deleted:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      program_id:
+        type: integer
+        format: int32
+      start_date_d:
+        type: integer
+        format: int32
+      start_date_m:
+        type: integer
+        format: int32
+      start_date_y:
+        type: integer
+        format: int32
+      start_time_h:
+        type: integer
+        format: int32
+      start_time_m:
+        type: integer
+        format: int32
+      start_time_s:
+        type: integer
+        format: int32
+      updated_at:
+        type: string
+        format: date-time
+      updater_id:
+        type: integer
+        format: int32
+  Program_time_exeptions:
+    type: object
+    properties:
+      created_at:
+        type: string
+        format: date-time
+      creator_id:
+        type: integer
+        format: int32
+      date_d:
+        type: integer
+        format: int32
+      date_m:
+        type: integer
+        format: int32
+      date_y:
+        type: integer
+        format: int32
+      deleted_at:
+        type: string
+        format: date-time
+      flg_deleted:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      program_id:
+        type: integer
+        format: int32
+      updated_at:
+        type: string
+        format: date-time
+      updater_id:
+        type: integer
+        format: int32
+  Program_device_selected:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      program_id:
+        type: integer
+        format: int32
+      value:
+        type: string
+      flg_on_off:
+        type: boolean
+      device_type:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name:
+            type: string
+          presentation_img:
+            type: string
+          presentation_type:
+            type: string
+      
+        
+  EntityGroups:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+        
+  RecurrenceTypes:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string  
+  
+  Logical_operation_types:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      internal_key:
+        type: string
+      name:
+        type: string
+
+  Holidays:
+    type: object
+    properties:
+      created_at:
+        type: string
+        format: date-time
+      creator_id:
+        type: integer
+        format: int32
+      day:
+        type: integer
+        format: int32
+      deleted_at:
+        type: string
+        format: date-time
+      description:
+        type: string
+      flg_active:
+        type: boolean
+      flg_deleted:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      month:
+        type: integer
+        format: int32
+      name:
+        type: string
+      updated_at:
+        type: string
+        format: date-time
+      updater_id:
+        type: integer
+        format: int32
+      year:
+        type: integer
+        format: int32
+        
+  System_logical_gateways:
+    type: object
+    properties:
+      description:
+        type: string
+      gateway_decimal_id:
+        type: integer
+        format: int32
+      gateway_id:
+        type: integer
+        format: int32
+      gateway_type_id:
+        type: integer
+        format: int32
+      logical_gateway_id:
+        type: integer
+        format: int32
+    
+  DeviceTypes:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      marker_img:
+        type: string 
+      name:
+        type: string 
+      presentation_img:
+        type: string 
+      presentation_type:
+        type: string
+      presentation_config:
+        type: array
+        items:
+          $ref: '#/definitions/Presentation_config' 
+          
+  
+  Presentation_config:
+    type: object
+    properties:
+      max:
+        type: integer
+        format: int32
+      min:
+        type: integer
+        format: int32
+      step:
+        type: integer
+        format: int32
+      
+  
+  RealTimeDevices:
+    type: object
+    properties:
+      contract_id:
+        type: integer
+        format: int32
+      control_device_member:
+        type: string
+      decimal_precision:
+        type: string
+      device_description:
+        type: string
+      device_id:
+        type: integer
+        format: int32
+      device_member_id:
+        type: integer
+        format: int32
+      device_type_id:
+        type: integer
+        format: int32
+      external_id:
+        type: integer
+        format: int32
+      external_id_name:
+        type: string
+      flg_control:
+        type: boolean
+      flg_favorite:
+        type: boolean
+      flg_monit:
+        type: boolean
+      flg_set:
+        type: boolean
+      gateway_decimal_id:
+        type: integer
+        format: int32
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:
+        type: number
+        format: float
+      id:
+        type: integer
+        format: int32
+      last_value:
+        type: string
+      max_value:
+        type: string
+      min_value:
+        type: string
+      name:
+        type: string
+      presentation_img:
+        type: string
+      presentation_type:
+        type: string
+      realtime_device_member:
+        type: string
+      user_system_device_id:
+        type: integer
+        format: int32
+      widget_config_controller:
+        type: string
+      widget_config_view:
+        type: string
+      widget_default_params:
+        type: string
+      widget_id:
+        type: integer
+        format: int32
+      widget_key:
+        type: string
+      widget_type:
+        type: string
+        
+  RealTimeDeviceTypes:
+    type: object
+    properties:
+      control_device_member:
+        type: string
+      id:
+        type: integer
+        format: int32
+      measure_unit_label:
+        type: string
+      name:
+        type: string
+      presentation_img:
+        type: string
+      presentation_type:
+        type: string
+      realtime_device_member:
+        type: string
+      realtime_device_member_unit_id:
+        type: integer
+        format: int32
+      presentation_config:
+        type: array
+        items:
+          $ref: '#/definitions/Presentation_config'
+  
+  DevicesWithMembers:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      logical_gateway_id:
+        type: integer
+        format: int32
+      external_id:
+        type: integer
+        format: int32
+      device_members:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name: 
+            type: string
+      device_type:
+        type: array
+        items:
+          $ref: '#/definitions/RealTimeDeviceTypes'      
+          
+  DevicesInfo:
+    type: object
+    properties:
+      control_device_member:
+        type: string
+      decimal_precision:
+        type: string
+      device_cpe:
+        type: string
+      device_id:
+        type: integer
+        format: int32
+      device_name:
+        type: string
+      external_id:
+        type: integer
+        format: int32
+      external_id_name:
+        type: string
+      gateway_decimal_id:
+        type: integer
+        format: int32
+      gateway_external_id:
+        type: integer
+        format: int32
+      gateway_id:
+        type: integer
+        format: int32
+      gateway_type_id:
+        type: integer
+        format: int32
+      latitude:
+        type: number
+        format: float
+      longitude:
+        type: number
+        format: float
+      realtime_device_member:
+        type: string
+      realtime_symbol:
+        type: string
+      refresh_interval:
+        type: string
+      scale_factor:
+        type: string
+      device_metrics:
+        type: array
+        items:
+          $ref: '#/definitions/Devicemetrics' 
+  
+  Devicemetrics:
+    type: object
+    properties:
+      calc_type:
+        type: string
+      decimal_precision:
+        type: string
+      device_member:
+        type: string
+      flg_control:
+        type: boolean
+      flg_monitoring:
+        type: boolean
+      flg_realtime:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      internal_code:
+        type: string
+      last_value:
+        type: string
+      max_value:
+        type: string
+      min_value:
+        type: string
+      ref_value:
+        type: string
+      unit_measure_id:
+        type: integer
+        format: int32
+      unit_measure_symbol:
+        type: string
+
+  Indicators:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      type:
+        type: string
+      measure_unit:
+        type: string
+      active:
+        type: boolean
+      description:
+        type: string
+  
+  IndicatorInfo:
+    type: object
+    properties:
+      description:
+        type: string  
+      flg_active:
+        type: boolean
+      formula:
+        type: string
+      id:
+        type: integer
+        format: int32
+      indicator_type:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name:
+            type: string
+      indicator_type_id:
+        type: integer
+        format: int32
+      unit_measure:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int32
+          name:
+            type: string
+      unit_measure_id:
+        type: integer
+        format: int32
+  
+  DetailsIndicator:
+    type: object
+    properties:
+      device_id:
+        type: integer
+        format: int32
+      device_member_id:
+        type: integer
+        format: int32
+      device_member_name:
+        type: string
+      device_name:
+        type: string
+      external_id:
+        type: integer
+        format: int32
+      external_idname:
+        type: string
+      gateway_name:
+        type: string
+      logical_gateway_id:
+        type: integer
+        format: int32
+      unit_measure_id:
+        type: integer
+        format: int32
+      unit_measure_name:
+        type: string
+  
+  IndicatorType:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      order: 
+        type: integer
+        format: int32
+  
+  UnitMeasures:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      symbol:
+        type: string
+  
+  ActivityList:
+    type: object
+    properties:
+      history_at:
+        type: string
+      history_by:
+        type: string
+      history_info:
+        type: array
+        items:
+          $ref: '#/definitions/HistoryInfo' 
+      history_type:
+        type: string
+      record_id:
+        type: integer
+        format: int32
+      total_rows:
+        type: string
+  
+  
+  HistoryInfo:
+    type: object
+    properties:
+      program_execution_state_id:
+        type: integer
+        format: int32
+      program_name:
+        type: string
+      program_table_name:
+        type: string  
+ 
+  ActivityTypes:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      value:
+        type: string
+        
+  UpdateDeviceMonitoring:
+    type: object
+    properties:
+      device_id:
+        type: integer
+        format: int32
+      device_name:
+        type: string
+      device_type_id:
+        type: integer
+        format: int32
+      device_type_name:
+        type: string
+      external_device_type_id:
+        type: integer
+        format: int32
+      external_id:
+        type: integer
+        format: int32
+      external_idname:
+        type: string
+      external_zone:
+        type: string
+      gateway_decimal_id:
+        type: integer
+        format: int32
+      gateway_name:
+        type: string
+      gps_latitude:
+        type: number
+        format: float
+      gps_longitude:
+        type: number
+        format: float
+      logical_gateway_id:
+        type: integer
+        format: int32
+      order:
+        type: string
+      device_configurations:
+        type: array
+        items:
+          $ref: '#/definitions/DeviceConfig'
+  
+  DeviceConfig:
+    type: object
+    properties:
+      coverage_area:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      creator_id:
+        type: integer
+        format: int32
+      deleted_at:
+        type: string
+        format: date-time
+      flg_deleted:
+        type: boolean
+      flowmeter_device_id:
+        type: integer
+        format: int32
+      id:
+        type: integer
+        format: int32
+      ref_flow:
+        type: string
+      reference_pressure:
+        type: string
+      updated_at:
+        type: string
+        format: date-time
+      updater_id:
+        type: integer
+        format: int32
+          
+  ######RESPONSE OBJECTS###################
+  HttpError:
+    type: object
+    properties:
+      error:
+        type: string
+        description: The error type (a short string)
+        example: error_code
+      message:
+        type: string
+        description: The descciption of the error
+        example: Description of the error
+  
+  BadRequestError:
+    type: object
+    properties:
+      error:
+        type: string
+        description: The error type (a short string)
+      message:
+        type: string
+        description: The description of the error
+      errors:
+        type: array
+        items:
+          type: object
+          properties:
+            property:
+              type: string
+              description: The property where validation failed
+            message:
+              type: string
+              description: The validation error of this property
+        description: An optional array with more detailed errors, for example validation errors.      
+#####################################################################    
+###########################PARAMETERS#################################
+#####################################################################   
+
+parameters:
+    user_id:
+      name: user_id
+      in: query
+      description: The id of user
+      required: true
+      type: integer
+      format: int32
+    filter:  
+      name: filter
+      in: query
+      description: Filter
+      required: false
+      type: string
+    limit:  
+      name: limit
+      in: query
+      type: integer
+      format: int32
+      enum: [10,25,50]
+      description: select between 10, 25 or 50 
+      required: false
+    order:  
+      name: order
+      in: query
+      description: order of the results , cres or decres for ex
+      required: false
+      type: string
+    page:  
+      name: page
+      in: query
+      description: umber of the page of the results
+      required: false
+      type: string
+    select:  
+      name: select
+      in: query
+      type: integer
+      format: int32
+      enum: [10,25,50]
+      description: select between 10, 25 or 50 
+      required: false
+    internal_key:  
+      name: internal_key
+      in: query
+      description: internal key  for example Ez energy
+      required: true
+      type: string 
+      enum: [aquatropolis_entities,aquatropolis_systems,backoffice,backoffice.contents, backoffice_ezwaste,backoffice_reseller,entities,ezenergy,geoportal,golf,green, holidays,illumination,irrigation,maintenance,management_tariffs,my_account, my_account_entities,pivots_generic,pivots_irricampo,pivots_rkd,pivots_sulregas, pivots_valley,utilities,waste,water_management,ximi,ximi_sponsor]
+    app_id:
+      name: app_id
+      in: query
+      description: The id of user
+      required: true
+      type: integer
+      format: int32
+    app_segment_id:
+      name: app_segment_id
+      in: query
+      description: The id of user
+      required: true
+      type: integer
+      format: int32
+    user_system_id:
+      name: user_system_id
+      in: query
+      description: The id of user
+      required: true
+      type: integer 
+      format: int32
+    logo_id:
+      name: logo_id
+      in: query
+      description: The id of logo
+      required: true
+      type: integer
+      format: int32
+    device_category_id:
+      name: device_category_id
+      in: query
+      description: device category Id
+      required: true
+      type: integer
+      format: int32
+      
+    gateway_id:
+      name: gateway_id
+      in: query
+      description: gateway id 
+      required: true
+      type: integer
+      format: int32
+    
+    logical_gateway_id:
+      name: logical_gateway_id
+      in: query
+      description: logical_gateway_id 
+      required: true
+      type: integer
+      format: int32
+    state_id:
+      name: state_id
+      in: query
+      description: state id 
+      required: true
+      type: integer
+      format: int32
+    
+    gateway_type_id:
+      name: gateway_type_id
+      in: query
+      description: gateway type id 
+      required: true
+      type: integer
+      format: int32
+    device_id:
+      name: device_id
+      in: query
+      description: device_id
+      required: true
+      type: integer
+      format: int32  
+    context_type:
+      name: context_ type
+      in: query
+      type: string
+      enum: [user,entity,system]
+      description: select between user, entity or system.
+      required: True
+    context_id:
+      name: context_id
+      in: query
+      description: context_id
+      required: true
+      type: integer
+      format: int32
+    user_type_id:
+      name: user_type_id
+      in: query
+      description: Try use the id=1
+      required: true
+      type: integer
+      format: int32
+    user_account_id:
+      name: user_account_id
+      in: query
+      description: Try use the id= 72
+      required: true
+      type: integer
+      format: int32
+    start_date:
+      name: start_date
+      in: query
+      description: try 1501236465
+      required: true
+      type: integer
+      format: int64
+    end_date: 
+      name: end_date
+      in: query
+      description: end date 
+      required: true
+      type: integer
+      format: int64
+    in_service:
+      name: in_service
+      in: query
+      description: this parameter is used to know if the sonda is in service or not 0 or 1.
+      required: true
+      type: boolean
+    order_column:
+      name: order_column
+      in: query
+      description: this parameter is used too defined the order by date 
+      required: true
+      type: string
+      format: date-time
+    external_id:
+      name: external_id
+      in: query
+      description: this parameter is used when creating a new sonda for Example
+      required: true
+      type: integer
+      format: int32
+    description:
+      name: description
+      in: query
+      description: this parameter is used when creating a new sonda for Example
+      required: false
+      type: string
+    phone_number:
+      name: phone_number
+      in: query
+      description: this parameter is used when creating a new sonda for Example
+      required: true
+      type: string
+    system_id:
+      name: system_id
+      in: query
+      description: this parameter is used when creating a new sonda for Example
+      required: true
+      type: integer
+      format: int32
+    timezone_id:
+      name: timezone_id
+      in: query
+      description: this parameter is used when creating a new sonda for Example
+      required: true
+      type: integer
+      format: int32  
+    state:
+      name: state
+      in: query
+      description: this parameter is used when showing the program list in Operações bee2energy
+      required: true
+      type: boolean
+    sync:
+      name: sync
+      in: query
+      description: this parameter is used when showing the program list in Operações bee2energy
+      required: true
+      type: boolean
+    program_id:
+      name: program_id
+      in: query
+      description: this parameter is used fot the metho get_program_actuation for Example
+      required: true
+      type: integer
+      format: int32 
+    indicator_id:
+      name: indicator_id
+      in: query
+      description: this parameter is used server/api/common/indicators/get_details?.
+      required: true
+      type: integer
+      format: int32 
+      
+ ###################RESPONSES##################################
+  
+responses:
+  Forbidden:
+    description: You do not have access to this resource
+    schema:
+      $ref: '#/definitions/HttpError'
+  NotFound:
+    description: The resource does not exist
+    schema:
+      $ref: '#/definitions/HttpError'
+  Unauthorized:
+    description: You do not have permission to perform this action
+    schema:
+      $ref: '#/definitions/HttpError'
+  BadRequest:
+    description: The request was invalid
+    schema:
+      $ref: '#/definitions/BadRequestError'
+  InternalServerError:
+    description: The server failed to fulfill an apparently valid request
+    schema:
+      $ref: '#/definitions/HttpError'
+      
+  ###################TAGS##################################
+  
+tags:
+  -
+    name: MyAccount
+    description: Endpoints related to accounts
+  -
+    name: User
+    description: Endpoints related to User
+  -
+    name: Notifications
+    description: Endpoints related to the Notifications
+  -
+    name: Categories
+    description: Endpoints related to Categories  
+    
+  -
+    name: Entities 
+    description: Endpoints related to Entities
+  -
+    name: Common
+    description: Endpoints that are Common in ..
+  -
+    name: Menus
+    description: Endpoints related with the Menus
+  -
+    name: Apps
+    description: Endpoints related with the Apps
+  -
+    name: Subscriptions
+    description: Endpoints related with the Subscriptions
+  -
+    name: Hardware
+    description: Endpoints related with Hardware
+  -
+    name: Tariffs
+    description: Endpoints related with Tariffs
+  -
+    name: Shares
+    description: Endpoints related with Shares 
+  -
+    name: BackOffice
+    description: Endpoints related with BackOffice
+    
